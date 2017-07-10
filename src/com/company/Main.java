@@ -2,10 +2,15 @@ package com.company;
 
 import javafx.application.Application;
 import javafx.event.*;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.stage.*;
-import java.util.*;
-import java.io.*;
 
 public class Main extends Application {
 
@@ -15,6 +20,48 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        BorderPane root = createUI();
+        root.setPrefSize(600, 400);
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add("/com/company/UIStyle.css");
+        primaryStage.setTitle("2048 Algorithms");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
 
+    private BorderPane createUI() {
+        BorderPane pane = new BorderPane();
+        Pane top = new Pane();
+        top.setPrefSize(600,90);
+        Label header = new Label("2048 Algorithms Visualizer");
+        header.setId("label-title");
+        header = setCoordinates(header, 108, 14);
+        Label by = new Label("By:");
+        by.setId("label-by");
+        by = setCoordinates(by, 130, 57);
+        Label author = new Label("Luke Smith");
+        author = setCoordinates(author, 160, 57);
+        top.getChildren().addAll(header, by, author);
+        pane.setTop(top);
+
+        VBox algorithmList = new VBox();
+        algorithmList.setPrefSize(165,300);
+        algorithmList.setAlignment(Pos.BASELINE_CENTER);
+        Button randomButton = new Button("Random Direction");
+        algorithmList.getChildren().addAll(randomButton);
+        pane.setRight(algorithmList);
+
+        Pane gameview = new Pane();
+        Board board = new Board();
+        gameview.getChildren().add(board.getTiles(), board.getBackground());
+        pane.setCenter(gameview);
+
+        return pane;
+    }
+
+    private Label setCoordinates(Label label, double x, double y) {
+        label.setLayoutX(x);
+        label.setLayoutY(y);
+        return label;
     }
 }

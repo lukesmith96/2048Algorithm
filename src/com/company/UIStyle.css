@@ -1,0 +1,16 @@
+.label{
+	-fx-font-size: 18;
+	-fx-text-fill: #ff7300;
+}
+
+.button{
+
+}
+
+#label-title{
+	-fx-font-size: 36;
+}
+
+#label-by{
+	-fx-text-fill: #000000;
+}
