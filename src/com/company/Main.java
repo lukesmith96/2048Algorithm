@@ -11,6 +11,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.*;
+import com.company.Tile;
+
+import static com.company.Tile.TILE_BOARDER;
+import static com.company.Tile.TILE_SIZE;
 
 public class Main extends Application {
 
@@ -35,12 +39,12 @@ public class Main extends Application {
         top.setPrefSize(600,90);
         Label header = new Label("2048 Algorithms Visualizer");
         header.setId("label-title");
-        header = setCoordinates(header, 108, 14);
+        header = setCoordinates(header, 108, 0);
         Label by = new Label("By:");
         by.setId("label-by");
-        by = setCoordinates(by, 130, 57);
+        by = setCoordinates(by, 130, 43);
         Label author = new Label("Luke Smith");
-        author = setCoordinates(author, 160, 57);
+        author = setCoordinates(author, 160, 43);
         top.getChildren().addAll(header, by, author);
         pane.setTop(top);
 
@@ -52,8 +56,11 @@ public class Main extends Application {
         pane.setRight(algorithmList);
 
         Pane gameview = new Pane();
+        gameview.setStyle("-fx-border-width:7px;");
         Board board = new Board();
-        gameview.getChildren().add(board.getTiles(), board.getBackground());
+        //Rectangle border = new Rectangle(TILE_SIZE * 3 + (2 * TILE_BOARDER), TILE_SIZE * 3 + (2 * TILE_BOARDER));
+        //border.setStroke(new Color(187,173,160, 1));
+        gameview.getChildren().addAll(board.getBackground(), board.getTiles());
         pane.setCenter(gameview);
 
         return pane;
