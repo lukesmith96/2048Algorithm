@@ -5,12 +5,20 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import java.util.Random;
+
 import static com.company.Tile.TILE_BOARDER;
 import static com.company.Tile.TILE_SIZE;
 
 /**
- * Created by lukes on 08-Jul-17.
+ * Created by Luke Smith on 08-Jul-17.
  */
+enum Direction {
+    UP,
+    DOWN,
+    RIGHT,
+    LEFT;
+}
 public class Board {
 
     public static final int BOARD_WIDTH = 4;
@@ -29,8 +37,43 @@ public class Board {
                 background.getChildren().add(backg);
             }
         }
-        Tile tile = new Tile(1,1);
-        tiles.getChildren().addAll(tile);
+        /*Random rand = new Random();
+        int randX = rand.nextInt(4);
+        int randY = rand.nextInt(4);
+        Tile tile = new Tile(randX,randY,2);
+        randX = rand.nextInt(4);
+        randY = rand.nextInt(4);
+        Tile tile2 = new Tile(randX, randY,2);*/
+        tiles.getChildren().addAll(createTile(true), createTile(true));
+    }
+    public void makeMove(Direction d) {
+        switch (d) {
+            case UP:
+
+                break;
+            case DOWN:
+
+                break;
+            case LEFT:
+
+                break;
+            case RIGHT:
+
+                break;
+        }
+    }
+    public Tile createTile(boolean lock) {
+        Random rand = new Random();
+        int randX = rand.nextInt(4);
+        int randY = rand.nextInt(4);
+        for (Node n : tiles.getChildren()) {
+            Tile tile = (Tile)n;
+            if(tile.getPosX() == randX && tile.getPosY() == randY)
+                return createTile(lock);
+        }
+        int randWeight = rand.nextInt(4);
+        Tile tile = new Tile(randX,randY, (randWeight == 4 && !lock)? 4 : 2);
+        return tile;
     }
     public Group getBackground() {return background; }
     public Group getTiles() {
