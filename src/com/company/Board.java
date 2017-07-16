@@ -5,6 +5,8 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+
+import java.util.ArrayList;
 import java.util.Random;
 
 import static com.company.Tile.TILE_BOARDER;
@@ -26,7 +28,7 @@ public class Board {
 
     public static final Image defaultImage = new Image("/com/company/defaultSquare.jpg");
     private Group background = new Group();
-    private Group tiles = new Group();
+    private ArrayList<Tile> tiles = new ArrayList<>();
 
     Board() {
         for (int x =0; x < BOARD_WIDTH; x++) {
@@ -44,12 +46,20 @@ public class Board {
         randX = rand.nextInt(4);
         randY = rand.nextInt(4);
         Tile tile2 = new Tile(randX, randY,2);*/
-        tiles.getChildren().addAll(createTile(true), createTile(true));
+        tiles.add(createTile(true));
+        tiles.add(createTile(true));
     }
     public void makeMove(Direction d) {
+        int x = 0,y = 0;
         switch (d) {
             case UP:
-
+                for(y = 1; y < BOARD_HEIGHT; y++) {
+                    for (Tile curr : tiles){
+                        if (curr.getPosY() == y) {
+                            int jump = canMove(Direction.UP, curr);
+                        }
+                    }
+                }
                 break;
             case DOWN:
 
@@ -62,11 +72,37 @@ public class Board {
                 break;
         }
     }
+
+    private int canMove(Direction d, Tile curr) {
+        int move = 0;
+        switch (d) {
+            case UP:
+                //int pot = curr.getPosY();
+                //int max = 0;
+                for (Tile t : tiles) {
+                    if (t.getPosY() < curr.getPosY()  && t.getPosX() == curr.getPosX()) {
+                        move = (move < t.getPosY())? t.getPosY() : move;
+                    }
+                }
+                break;
+            case DOWN:
+
+                break;
+            case LEFT:
+
+                break;
+            case RIGHT:
+
+                break;
+        }
+        return move;
+    }
+
     public Tile createTile(boolean lock) {
         Random rand = new Random();
         int randX = rand.nextInt(4);
         int randY = rand.nextInt(4);
-        for (Node n : tiles.getChildren()) {
+        for (Tile n : tiles) {
             Tile tile = (Tile)n;
             if(tile.getPosX() == randX && tile.getPosY() == randY)
                 return createTile(lock);
@@ -76,7 +112,7 @@ public class Board {
         return tile;
     }
     public Group getBackground() {return background; }
-    public Group getTiles() {
+    public ArrayList<Tile> getTiles() {
         return tiles;
     }
 }

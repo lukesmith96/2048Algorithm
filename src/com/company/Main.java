@@ -60,7 +60,8 @@ public class Main extends Application {
         Board board = new Board();
         //Rectangle border = new Rectangle(TILE_SIZE * 3 + (2 * TILE_BOARDER), TILE_SIZE * 3 + (2 * TILE_BOARDER));
         //border.setStroke(new Color(187,173,160, 1));
-        gameview.getChildren().addAll(board.getBackground(), board.getTiles());
+        gameview.getChildren().addAll(board.getBackground());
+        gameview.getChildren().addAll(board.getTiles());
         pane.setCenter(gameview);
 
         return pane;
