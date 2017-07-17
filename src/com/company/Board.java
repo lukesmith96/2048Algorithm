@@ -53,6 +53,7 @@ public class Board {
         int x = 0,y = 0;
         switch (d) {
             case UP:
+                System.out.println("Making move!");
                 for(y = 1; y < BOARD_HEIGHT; y++) {
                     for (Tile curr : tiles){
                         if (curr.getPosY() == y) {
@@ -102,13 +103,12 @@ public class Board {
         Random rand = new Random();
         int randX = rand.nextInt(4);
         int randY = rand.nextInt(4);
-        for (Tile n : tiles) {
-            Tile tile = (Tile)n;
-            if(tile.getPosX() == randX && tile.getPosY() == randY)
+        for (Tile tile : tiles) {
+            if (tile.getPosX() == randX && tile.getPosY() == randY)
                 return createTile(lock);
         }
         int randWeight = rand.nextInt(4);
-        Tile tile = new Tile(randX,randY, (randWeight == 4 && !lock)? 4 : 2);
+        Tile tile = new Tile(randX, randY, (randWeight == 4 && !lock) ? 4 : 2);
         return tile;
     }
     public Group getBackground() {return background; }

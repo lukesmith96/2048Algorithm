@@ -13,11 +13,14 @@ import javafx.scene.text.Font;
 import javafx.stage.*;
 import com.company.Tile;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import static com.company.Tile.TILE_BOARDER;
 import static com.company.Tile.TILE_SIZE;
 
 public class Main extends Application {
 
+    private Board board = new Board();
     public static void main(String[] args) {
         launch(args);
     }
@@ -56,8 +59,8 @@ public class Main extends Application {
         pane.setRight(algorithmList);
 
         Pane gameview = new Pane();
+        pane.setOnKeyPressed(new KeyListener(board));
         gameview.setStyle("-fx-border-width:7px;");
-        Board board = new Board();
         //Rectangle border = new Rectangle(TILE_SIZE * 3 + (2 * TILE_BOARDER), TILE_SIZE * 3 + (2 * TILE_BOARDER));
         //border.setStroke(new Color(187,173,160, 1));
         gameview.getChildren().addAll(board.getBackground());
@@ -66,7 +69,9 @@ public class Main extends Application {
 
         return pane;
     }
-
+    public Board getBoard(){
+        return board;
+    }
     private Label setCoordinates(Label label, double x, double y) {
         label.setLayoutX(x);
         label.setLayoutY(y);
