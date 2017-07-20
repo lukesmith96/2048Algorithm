@@ -1,26 +1,18 @@
 package com.company;
 
 import javafx.application.Application;
-import javafx.event.*;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
+
 import javafx.stage.*;
-import com.company.Tile;
 
-import java.util.concurrent.atomic.AtomicReference;
-
-import static com.company.Tile.TILE_BOARDER;
-import static com.company.Tile.TILE_SIZE;
 
 public class Main extends Application {
 
     private Board board = new Board();
+    private Pane gameview = new Pane();
     public static void main(String[] args) {
         launch(args);
     }
@@ -28,7 +20,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         BorderPane root = createUI();
-        root.setPrefSize(600, 400);
+        root.setPrefSize(700, 600);
         Scene scene = new Scene(root);
         scene.getStylesheets().add("/com/company/UIStyle.css");
         primaryStage.setTitle("2048 Algorithms");
@@ -58,19 +50,13 @@ public class Main extends Application {
         algorithmList.getChildren().addAll(randomButton);
         pane.setRight(algorithmList);
 
-        Pane gameview = new Pane();
-        pane.setOnKeyPressed(new KeyListener(board));
+        pane.setOnKeyPressed(new KeyListener(board, gameview));
         gameview.setStyle("-fx-border-width:7px;");
-        //Rectangle border = new Rectangle(TILE_SIZE * 3 + (2 * TILE_BOARDER), TILE_SIZE * 3 + (2 * TILE_BOARDER));
-        //border.setStroke(new Color(187,173,160, 1));
         gameview.getChildren().addAll(board.getBackground());
         gameview.getChildren().addAll(board.getTiles());
         pane.setCenter(gameview);
 
         return pane;
-    }
-    public Board getBoard(){
-        return board;
     }
     private Label setCoordinates(Label label, double x, double y) {
         label.setLayoutX(x);

@@ -1,15 +1,12 @@
 package com.company;
 
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
-
 import java.util.ArrayList;
 import java.util.Random;
-
-import static com.company.Tile.TILE_BOARDER;
 import static com.company.Tile.TILE_SIZE;
 
 /**
@@ -19,14 +16,14 @@ enum Direction {
     UP,
     DOWN,
     RIGHT,
-    LEFT;
+    LEFT
 }
 public class Board {
 
     public static final int BOARD_WIDTH = 4;
     public static final int BOARD_HEIGHT = 4;
-
     public static final Image defaultImage = new Image("/com/company/defaultSquare.jpg");
+
     private Group background = new Group();
     private ArrayList<Tile> tiles = new ArrayList<>();
 
@@ -39,64 +36,119 @@ public class Board {
                 background.getChildren().add(backg);
             }
         }
-        /*Random rand = new Random();
-        int randX = rand.nextInt(4);
-        int randY = rand.nextInt(4);
-        Tile tile = new Tile(randX,randY,2);
-        randX = rand.nextInt(4);
-        randY = rand.nextInt(4);
-        Tile tile2 = new Tile(randX, randY,2);*/
         tiles.add(createTile(true));
         tiles.add(createTile(true));
     }
-    public void makeMove(Direction d) {
+
+    public void makeMove(Direction d, Pane gameview) {
         int x = 0,y = 0;
         switch (d) {
             case UP:
                 System.out.println("Making move!");
                 for(y = 1; y < BOARD_HEIGHT; y++) {
-                    for (Tile curr : tiles){
+                    ArrayList<Tile> temp = (ArrayList<Tile>)tiles.clone();
+                    for (Tile curr : temp){
                         if (curr.getPosY() == y) {
-                            int jump = canMove(Direction.UP, curr);
+                            Tile block = canMove(Direction.UP, curr);
+                            if (block != null && curr.canCollide(block)){
+                                switchblocks(gameview,curr,block);
+                            }
+                            curr.move(curr.getPosX(), (block!=null)? block.getPosY() + 1 : 0);
                         }
                     }
                 }
                 break;
             case DOWN:
-
+                for(y = 2; y >= 0; y--) {
+                    ArrayList<Tile> temp = (ArrayList<Tile>)tiles.clone();
+                    for (Tile curr : temp){
+                        if (curr.getPosY() == y) {
+                            Tile block = canMove(Direction.DOWN, curr);
+                            if (block != null && curr.canCollide(block)){
+                                switchblocks(gameview,curr,block);
+                            }
+                            else
+                                curr.move(curr.getPosX(), (block!=null)? block.getPosY() - 1 : 3);
+                        }
+                    }
+                }
                 break;
             case LEFT:
-
+                for(x = 1; x < BOARD_WIDTH; x++) {
+                    ArrayList<Tile> temp = (ArrayList<Tile>)tiles.clone();
+                    for (Tile curr : temp){
+                        if (curr.getPosX() == x) {
+                            Tile block = canMove(Direction.LEFT, curr);
+                            if (block != null && curr.canCollide(block)){
+                                switchblocks(gameview,curr,block);
+                            }
+                            else
+                                curr.move((block!=null)? block.getPosX() + 1 : 0, curr.getPosY());
+                        }
+                    }
+                }
                 break;
             case RIGHT:
-
+                for(x = 2; x >= 0; x--) {
+                    ArrayList<Tile> temp = (ArrayList<Tile>)tiles.clone();
+                    for (Tile curr : temp){
+                        if (curr.getPosX() == x) {
+                            Tile block = canMove(Direction.RIGHT, curr);
+                            if (block != null && curr.canCollide(block))
+                                switchblocks(gameview,curr,block);
+                            else
+                                curr.move((block!=null)? block.getPosX() - 1 : 3 , curr.getPosY());
+                        }
+                    }
+                }
                 break;
         }
     }
 
-    private int canMove(Direction d, Tile curr) {
-        int move = 0;
+    private void switchblocks(Pane gameview, Tile curr, Tile block) {
+        Tile newTile = curr.collide(block);
+        System.out.println("Resolving Collision");
+        tiles.remove(curr);
+        gameview.getChildren().remove(curr);
+        gameview.getChildren().remove(block);
+        tiles.remove(block);
+        tiles.add(newTile);
+        gameview.getChildren().add(newTile);
+    }
+
+    private Tile canMove(Direction d, Tile curr) {
+        Tile toReturn = null;
         switch (d) {
             case UP:
-                //int pot = curr.getPosY();
-                //int max = 0;
                 for (Tile t : tiles) {
                     if (t.getPosY() < curr.getPosY()  && t.getPosX() == curr.getPosX()) {
-                        move = (move < t.getPosY())? t.getPosY() : move;
+                         toReturn = ((((toReturn != null)? toReturn.getPosY() : -1) < t.getPosY()) || toReturn == null)? t : toReturn;
                     }
                 }
                 break;
             case DOWN:
-
+                for (Tile t : tiles) {
+                    if (t.getPosY() > curr.getPosY()  && t.getPosX() == curr.getPosX()) {
+                        toReturn = ((((toReturn != null)? toReturn.getPosY() : 4) > t.getPosY()) || toReturn == null)? t : toReturn;
+                    }
+                }
                 break;
             case LEFT:
-
+                for (Tile t : tiles) {
+                    if (t.getPosX() < curr.getPosX()  && t.getPosY() == curr.getPosY()) {
+                        toReturn = ((((toReturn != null)? toReturn.getPosX() : -1) < t.getPosX()) || toReturn == null)? t : toReturn;
+                    }
+                }
                 break;
             case RIGHT:
-
+                for (Tile t : tiles) {
+                    if (t.getPosX() > curr.getPosX()  && t.getPosY() == curr.getPosY()) {
+                        toReturn = ((((toReturn != null)? toReturn.getPosX() : 4) > t.getPosX()) || toReturn == null)? t : toReturn;
+                    }
+                }
                 break;
         }
-        return move;
+        return toReturn;
     }
 
     public Tile createTile(boolean lock) {
@@ -109,10 +161,20 @@ public class Board {
         }
         int randWeight = rand.nextInt(4);
         Tile tile = new Tile(randX, randY, (randWeight == 4 && !lock) ? 4 : 2);
+        System.out.println("New Tile PosX: " + tile.getPosX() + "PosY: " + tile.getPosY());
         return tile;
     }
     public Group getBackground() {return background; }
     public ArrayList<Tile> getTiles() {
         return tiles;
+    }
+
+    public void add(Tile tile) {
+        tiles.add(tile);
+    }
+    public void testPrint() {
+        for (Tile curr : tiles) {
+            System.out.println("Tile [" + curr.getPosX() + ", " + curr.getPosY() + "]");
+        }
     }
 }
