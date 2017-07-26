@@ -13,6 +13,10 @@ public class Main extends Application {
 
     private Board board = new Board();
     private Pane gameview = new Pane();
+
+    public Main() throws Exception {
+    }
+
     public static void main(String[] args) {
         launch(args);
     }

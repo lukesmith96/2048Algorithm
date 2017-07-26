@@ -27,7 +27,7 @@ public class Board {
     private Group background = new Group();
     private ArrayList<Tile> tiles = new ArrayList<>();
 
-    Board() {
+    Board() throws Exception {
         for (int x =0; x < BOARD_WIDTH; x++) {
             for (int y = 0; y < BOARD_HEIGHT; y++){
                 Rectangle backg = new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
@@ -151,18 +151,20 @@ public class Board {
         return toReturn;
     }
 
-    public Tile createTile(boolean lock) {
-        Random rand = new Random();
-        int randX = rand.nextInt(4);
-        int randY = rand.nextInt(4);
-        for (Tile tile : tiles) {
-            if (tile.getPosX() == randX && tile.getPosY() == randY)
-                return createTile(lock);
+    public Tile createTile(boolean lock) throws Exception {
+        if (tiles.size() < (BOARD_WIDTH * BOARD_HEIGHT)) {
+            Random rand = new Random();
+            int randX = rand.nextInt(4);
+            int randY = rand.nextInt(4);
+            for (Tile tile : tiles) {
+                if (tile.getPosX() == randX && tile.getPosY() == randY)
+                    return createTile(lock);
+            }
+            int randWeight = rand.nextInt(4);
+            Tile tile = new Tile(randX, randY, (randWeight == 4 && !lock) ? 4 : 2);
+            return tile;
         }
-        int randWeight = rand.nextInt(4);
-        Tile tile = new Tile(randX, randY, (randWeight == 4 && !lock) ? 4 : 2);
-        System.out.println("New Tile PosX: " + tile.getPosX() + "PosY: " + tile.getPosY());
-        return tile;
+        else throw new Exception("Game Board Full");
     }
     public Group getBackground() {return background; }
     public ArrayList<Tile> getTiles() {

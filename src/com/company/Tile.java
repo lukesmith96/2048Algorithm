@@ -35,6 +35,7 @@ public class Tile extends StackPane {
     public Tile collide(Tile tile) {
         return new Tile(tile.getPosX(), tile.getPosY(), weight * 2);
     }
+
     public int getWeight(){
         return weight;
     }

@@ -19,36 +19,44 @@ public class KeyListener implements EventHandler<KeyEvent> {
     @Override
     public void handle(KeyEvent event) {
         if (event.getCode() == KeyCode.UP) {
-            System.out.println("I have listened!");
             board.makeMove(Direction.UP, gameview);
-            System.out.println("Adding new Tile!");
-            Tile tile = board.createTile(false);
-            board.add(tile);
-            gameview.getChildren().add(tile);
+            try {
+                Tile tile = board.createTile(false);
+                board.add(tile);
+                gameview.getChildren().add(tile);
+            } catch (Exception e) {
+                System.out.println("You LOST! " + e.getMessage());
+            }
         }
         if (event.getCode() == KeyCode.DOWN) {
-            System.out.println("I have listened!");
             board.makeMove(Direction.DOWN, gameview);
-            System.out.println("Adding new Tile!");
-            Tile tile = board.createTile(false);
-            board.add(tile);
-            gameview.getChildren().add(tile);
+            try {
+                Tile tile = board.createTile(false);
+                board.add(tile);
+                gameview.getChildren().add(tile);
+            } catch (Exception e) {
+                System.out.println("You LOST! " + e.getMessage());
+            }
         }
         if (event.getCode() == KeyCode.LEFT) {
-            System.out.println("I have listened!");
             board.makeMove(Direction.LEFT, gameview);
-            System.out.println("Adding new Tile!");
-            Tile tile = board.createTile(false);
-            board.add(tile);
-            gameview.getChildren().add(tile);
+            try {
+                Tile tile = board.createTile(false);
+                board.add(tile);
+                gameview.getChildren().add(tile);
+            } catch (Exception e) {
+                System.out.println("You LOST! " + e.getMessage());
+            }
         }
         if (event.getCode() == KeyCode.RIGHT) {
-            System.out.println("I have listened!");
             board.makeMove(Direction.RIGHT, gameview);
-            System.out.println("Adding new Tile!");
-            Tile tile = board.createTile(false);
-            board.add(tile);
-            gameview.getChildren().add(tile);
+            try {
+                Tile tile = board.createTile(false);
+                board.add(tile);
+                gameview.getChildren().add(tile);
+            } catch (Exception e) {
+                System.out.println("You LOST! " + e.getMessage());
+            }
         }
     }
 }
