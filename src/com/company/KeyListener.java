@@ -19,43 +19,43 @@ public class KeyListener implements EventHandler<KeyEvent> {
     @Override
     public void handle(KeyEvent event) {
         if (event.getCode() == KeyCode.UP) {
-            board.makeMove(Direction.UP, gameview);
-            try {
+            if (board.makeMove(Direction.UP, gameview)) {
                 Tile tile = board.createTile(false);
                 board.add(tile);
                 gameview.getChildren().add(tile);
-            } catch (Exception e) {
-                System.out.println("You LOST! " + e.getMessage());
+            }
+            if (!board.isValidMove()) {
+                System.out.println("You LOST! ");
             }
         }
         if (event.getCode() == KeyCode.DOWN) {
-            board.makeMove(Direction.DOWN, gameview);
-            try {
+            if (board.makeMove(Direction.DOWN, gameview)) {
                 Tile tile = board.createTile(false);
                 board.add(tile);
                 gameview.getChildren().add(tile);
-            } catch (Exception e) {
-                System.out.println("You LOST! " + e.getMessage());
+            }
+            if (!board.isValidMove()) {
+                System.out.println("You LOST! ");
             }
         }
         if (event.getCode() == KeyCode.LEFT) {
-            board.makeMove(Direction.LEFT, gameview);
-            try {
+            if(board.makeMove(Direction.LEFT, gameview)) {
                 Tile tile = board.createTile(false);
                 board.add(tile);
                 gameview.getChildren().add(tile);
-            } catch (Exception e) {
-                System.out.println("You LOST! " + e.getMessage());
+            }
+            if (!board.isValidMove()) {
+                System.out.println("You LOST! ");
             }
         }
         if (event.getCode() == KeyCode.RIGHT) {
-            board.makeMove(Direction.RIGHT, gameview);
-            try {
+            if (board.makeMove(Direction.RIGHT, gameview)) {
                 Tile tile = board.createTile(false);
                 board.add(tile);
                 gameview.getChildren().add(tile);
-            } catch (Exception e) {
-                System.out.println("You LOST! " + e.getMessage());
+            }
+            if (!board.isValidMove()) {
+                System.out.println("You LOST! ");
             }
         }
     }

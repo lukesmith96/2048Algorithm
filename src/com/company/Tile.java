@@ -61,7 +61,6 @@ public class Tile extends StackPane {
     public void move(int newX, int newY) {
         this.posX = newX;
         this.posY = newY;
-        System.out.println("Pos X:" + posX + " Y:" + posY);
         relocate(posX * TILE_SIZE + TILE_BORDER, posY * TILE_SIZE + TILE_BORDER);
     }
 }
