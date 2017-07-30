@@ -133,6 +133,8 @@ public class Board {
         gameview.getChildren().remove(curr);
         gameview.getChildren().remove(block);
         gameview.getChildren().add(newTile);
+        score += newTile.getWeight();
+        System.out.println("Score: " + score);
     }
 
     private Tile canMove(Direction d, Tile curr) {

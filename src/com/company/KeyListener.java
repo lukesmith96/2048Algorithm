@@ -50,7 +50,8 @@ public class KeyListener implements EventHandler<KeyEvent> {
         }
         if (event.getCode() == KeyCode.RIGHT) {
             if (board.makeMove(Direction.RIGHT, gameview)) {
-                Tile tile = board.createTile(false);
+                Tile
+                        tile = board.createTile(false);
                 board.add(tile);
                 gameview.getChildren().add(tile);
             }

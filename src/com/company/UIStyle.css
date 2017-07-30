@@ -3,10 +3,27 @@
 	-fx-text-fill: #ff7300;
 }
 
-.button{
-
+.button {
+    -fx-background-color:
+        rgba(0,0,0,0.08),
+        linear-gradient(#ff8929, #ff8929),
+        linear-gradient(#fc9744 0%,#ff8929 10%, #ff8929 50%, #ff8929 51%, #ff8929 100%);
+    -fx-background-insets: 0 0 -1 0,0,1;
+    -fx-background-radius: 5,5,4;
+    -fx-padding: 8 25 8 25;
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
 }
 
+#sl .track {
+    -fx-pref-height: 10;
+    -fx-pref-width: 200;
+}
+
+
+#xbox{
+    -fx-spacing: 20px;
+}
 #label-title{
 	-fx-font-size: 36;
 }
