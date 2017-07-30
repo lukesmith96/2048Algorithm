@@ -12,12 +12,7 @@ import static com.company.Tile.TILE_SIZE;
 /**
  * Created by Luke Smith on 08-Jul-17.
  */
-enum Direction {
-    UP,
-    DOWN,
-    RIGHT,
-    LEFT
-}
+
 public class Board {
 
     public static final int BOARD_WIDTH = 4;
@@ -184,6 +179,7 @@ public class Board {
         Tile tile = new Tile(randX, randY, (randWeight == 4 && !lock) ? 4 : 2);
         return tile;
     }
+
     public Group getBackground() {return background; }
 
     public ArrayList<Tile> getTiles() {

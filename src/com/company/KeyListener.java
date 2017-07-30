@@ -10,54 +10,28 @@ import javafx.scene.layout.Pane;
 public class KeyListener implements EventHandler<KeyEvent> {
     public Board board;
     public Pane gameview;
+    public DirectionController dirControl;
 
     public KeyListener(Board board, Pane gameview) {
         this.board = board;
         this.gameview = gameview;
+        dirControl = new DirectionController(board, gameview);
     }
 
     @Override
     public void handle(KeyEvent event) {
-        if (event.getCode() == KeyCode.UP) {
-            if (board.makeMove(Direction.UP, gameview)) {
-                Tile tile = board.createTile(false);
-                board.add(tile);
-                gameview.getChildren().add(tile);
-            }
-            if (!board.isValidMove()) {
-                System.out.println("You LOST! ");
-            }
+        if (event.getCode() == KeyCode.UP && UIController.USER == true) {
+            dirControl.move(Direction.UP);
         }
-        if (event.getCode() == KeyCode.DOWN) {
-            if (board.makeMove(Direction.DOWN, gameview)) {
-                Tile tile = board.createTile(false);
-                board.add(tile);
-                gameview.getChildren().add(tile);
-            }
-            if (!board.isValidMove()) {
-                System.out.println("You LOST! ");
-            }
+        if (event.getCode() == KeyCode.DOWN && UIController.USER == true) {
+            dirControl.move(Direction.DOWN);
         }
-        if (event.getCode() == KeyCode.LEFT) {
-            if(board.makeMove(Direction.LEFT, gameview)) {
-                Tile tile = board.createTile(false);
-                board.add(tile);
-                gameview.getChildren().add(tile);
-            }
-            if (!board.isValidMove()) {
-                System.out.println("You LOST! ");
-            }
+        if (event.getCode() == KeyCode.LEFT && UIController.USER == true) {
+            dirControl.move(Direction.LEFT);
         }
-        if (event.getCode() == KeyCode.RIGHT) {
-            if (board.makeMove(Direction.RIGHT, gameview)) {
-                Tile
-                        tile = board.createTile(false);
-                board.add(tile);
-                gameview.getChildren().add(tile);
-            }
-            if (!board.isValidMove()) {
-                System.out.println("You LOST! ");
-            }
+        if (event.getCode() == KeyCode.RIGHT && UIController.USER == true) {
+            dirControl.move(Direction.RIGHT);
         }
+        event.consume();
     }
 }

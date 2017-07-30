@@ -55,28 +55,37 @@ public class Main extends Application {
         algorithmList.setPrefSize(250,300);
         algorithmList.setAlignment(Pos.BASELINE_CENTER);
 
-        UIController buttonController = new UIController();
+
         Button randomButton = new Button("Random");
-        randomButton.setOnAction(buttonController);
-
-        Button s1Button = new Button("Corner Priority");
-        s1Button.setOnAction(buttonController);
-
-        Button s2Button = new Button("Stack Priority");
-        s2Button.setOnAction(buttonController);
-
+        Button userControlButton = new Button("User Control");
         Button s3Button = new Button("Mix Priority");
+        Button s2Button = new Button("Stack Priority");
+        Button s1Button = new Button("Corner Priority");
+        UIController buttonController = new UIController();
+        randomButton.setOnAction(buttonController);
+        s1Button.setOnAction(buttonController);
+        s2Button.setOnAction(buttonController);
         s3Button.setOnAction(buttonController);
-
-        Button userControlButton = new Button("User");
         userControlButton.setOnAction(buttonController);
+
+        Slider msSlider = new Slider();
+        pane.setBottom(createSlider(msSlider, buttonController));
+        buttonController.setSliderRef(msSlider);
 
         algorithmList.getChildren().addAll(randomButton, s1Button, s2Button, s3Button, userControlButton);
         pane.setRight(algorithmList);
 
+        pane.setOnKeyPressed(new KeyListener(board, gameview));
+        gameview.setStyle("-fx-border-width:7px;");
+        gameview.getChildren().addAll(board.getBackground());
+        gameview.getChildren().addAll(board.getTiles());
+        pane.setCenter(gameview);
+        return pane;
+    }
+
+    private Pane createSlider(Slider msSlider, UIController buttonController) {
         Pane sPane = new Pane();
-        pane.setPadding(new Insets(0,0,0,10));
-        Slider msSlider = new Slider();
+        sPane.setPadding(new Insets(0,0,0,10));
         msSlider.setMin(1);
         msSlider.setMax(301);
         msSlider.setValue(51);
@@ -107,6 +116,7 @@ public class Main extends Application {
         msSlider.setOnMouseDragged(e -> {
             int val = (int)Math.round(msSlider.getValue());
             label.setText(val + "ms");
+            buttonController.setDelay(val);
             popup.show(msSlider, e.getScreenX(), sPane.getLayoutY() + 10);
         });
         msSlider.setOnMouseExited(e -> popup.hide());
@@ -114,16 +124,9 @@ public class Main extends Application {
         msSlider.setOnMouseDragReleased(e -> popup.hide());
         msSlider.setOnMouseReleased(e -> popup.hide());
         sPane.getChildren().add(msSlider);
-        pane.setBottom(sPane);
-
-        pane.setOnKeyPressed(new KeyListener(board, gameview));
-        gameview.setStyle("-fx-border-width:7px;");
-        gameview.getChildren().addAll(board.getBackground());
-        gameview.getChildren().addAll(board.getTiles());
-        pane.setCenter(gameview);
-
-        return pane;
+        return sPane;
     }
+
     private Label setCoordinates(Label label, double x, double y) {
         label.setLayoutX(x);
         label.setLayoutY(y);
