@@ -3,6 +3,7 @@ package com.company;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -23,13 +24,22 @@ public class Tile extends StackPane {
         this.weight = weight;
         Rectangle rect = new Rectangle(x * TILE_SIZE + TILE_BORDER,y * TILE_SIZE + TILE_BORDER,
                 TILE_SIZE - (TILE_BORDER * 2),TILE_SIZE - (TILE_BORDER * 2));
-        rect.setFill(Color.web("#EEE4DA"));
+        rect.setFill(getColor(weight));
         relocate(x * TILE_SIZE + TILE_BORDER, y * TILE_SIZE + TILE_BORDER);
         Text text = new Text(weight + "");
         text.setFont(new Font(40));
         text.setStyle("-fx-font-weight: bold");
         text.setFill(new Color(0,0,0, 1));
         this.getChildren().addAll(rect, text);
+    }
+
+    private Paint getColor(int weight) {
+        String[] colors = {"#EEE4DA", "#EDE0C8", "#F2B179",
+                "#F59563", "#F67C5F", "#F65E3B", "#EDCF72",
+                "#EDCC61", "#EDC850", "#EDC53F", "#EDC22E",
+                "#3C3A32"};
+        int pick = (int)(Math.log(weight) / Math.log(2)) - 1;
+        return Color.web(colors[pick]);
     }
 
     public Tile collide(Tile tile) {

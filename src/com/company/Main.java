@@ -107,12 +107,7 @@ public class Main extends Application {
         msSlider.setOnMouseDragged(e -> {
             int val = (int)Math.round(msSlider.getValue());
             label.setText(val + "ms");
-            if (e.getX() < 10)
-                popup.show(msSlider, e.getX() + 10, sPane.getLayoutY() + 10);
-            else if (e.getX() > 2000)
-                popup.show(msSlider, 2000, sPane.getLayoutY() + 10);
-            else
-                popup.show(msSlider, (e.getScreenX() > 490)? 500 : e.getScreenX(), sPane.getLayoutY() + 10);
+            popup.show(msSlider, e.getScreenX(), sPane.getLayoutY() + 10);
         });
         msSlider.setOnMouseExited(e -> popup.hide());
         msSlider.setOnMouseDragExited(e -> popup.hide());
