@@ -61,7 +61,7 @@ public class Main extends Application {
         Button s3Button = new Button("Mix Priority");
         Button s2Button = new Button("Stack Priority");
         Button s1Button = new Button("Corner Priority");
-        UIController buttonController = new UIController();
+        UIController buttonController = new UIController(board, gameview);
         randomButton.setOnAction(buttonController);
         s1Button.setOnAction(buttonController);
         s2Button.setOnAction(buttonController);

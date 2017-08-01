@@ -53,8 +53,7 @@ public class DirectionController {
             break;
         }
         if (!board.isValidMove()) {
-            System.out.println("You LOST! ");
+            System.out.println("You LOST!");
         }
-
     }
 }

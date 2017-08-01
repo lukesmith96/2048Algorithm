@@ -20,18 +20,20 @@ public class KeyListener implements EventHandler<KeyEvent> {
 
     @Override
     public void handle(KeyEvent event) {
-        if (event.getCode() == KeyCode.UP && UIController.USER == true) {
+        if (event.getCode() == KeyCode.UP && UIController.currFunction == Function.USER) {
             dirControl.move(Direction.UP);
         }
-        if (event.getCode() == KeyCode.DOWN && UIController.USER == true) {
+        if (event.getCode() == KeyCode.DOWN && UIController.currFunction == Function.USER) {
             dirControl.move(Direction.DOWN);
         }
-        if (event.getCode() == KeyCode.LEFT && UIController.USER == true) {
+        if (event.getCode() == KeyCode.LEFT && UIController.currFunction == Function.USER) {
             dirControl.move(Direction.LEFT);
         }
-        if (event.getCode() == KeyCode.RIGHT && UIController.USER == true) {
+        if (event.getCode() == KeyCode.RIGHT && UIController.currFunction == Function.USER) {
             dirControl.move(Direction.RIGHT);
         }
+        if (event.getCode() == KeyCode.SPACE)
+            UIController.running = false;
         event.consume();
     }
 }
