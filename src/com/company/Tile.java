@@ -49,9 +49,6 @@ public class Tile extends StackPane {
     public int getWeight(){
         return weight;
     }
-    public void setWeight(int weight){
-        this.weight = weight;
-    }
 
     public int getPosX() {
         return posX;

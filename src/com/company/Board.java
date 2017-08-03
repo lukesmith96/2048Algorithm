@@ -36,7 +36,7 @@ public class Board {
         score = 0;
     }
 
-    public boolean makeMove(Direction d, Pane gameview) {
+    public boolean makeMove(Direction d, Main.GameContext gameContext) {
         boolean hasMoved = false;
         int y, x;
         switch (d) {
@@ -48,7 +48,7 @@ public class Board {
                             Tile block = canMove(Direction.UP, curr);
                             int yToMove = (block!=null)? block.getPosY() + 1 : 0;
                             if (block != null && curr.canCollide(block)) {
-                                switchblocks(gameview, curr, block);
+                                switchblocks(gameContext, curr, block);
                                 hasMoved = true;
                             }
                             else if (yToMove != curr.getPosY()) {
@@ -67,7 +67,7 @@ public class Board {
                             Tile block = canMove(Direction.DOWN, curr);
                             int yToMove = (block!=null)? block.getPosY() - 1 : 3;
                             if (block != null && curr.canCollide(block)){
-                                switchblocks(gameview,curr,block);
+                                switchblocks(gameContext,curr,block);
                                 hasMoved = true;
                             }
                             else if (yToMove != curr.getPosY()) {
@@ -86,7 +86,7 @@ public class Board {
                             Tile block = canMove(Direction.LEFT, curr);
                             int xToMove = (block!=null)? block.getPosX() + 1 : 0;
                             if (block != null && curr.canCollide(block)){
-                                switchblocks(gameview,curr,block);
+                                switchblocks(gameContext,curr,block);
                                 hasMoved = true;
                             }
                             else if (xToMove != curr.getPosX()) {
@@ -105,7 +105,7 @@ public class Board {
                             Tile block = canMove(Direction.RIGHT, curr);
                             int xToMove = (block!=null)? block.getPosX() - 1 : 3;
                             if (block != null && curr.canCollide(block)) {
-                                switchblocks(gameview, curr, block);
+                                switchblocks(gameContext, curr, block);
                                 hasMoved = true;
                             }
                             else if(xToMove != curr.getPosX()) {
@@ -120,14 +120,11 @@ public class Board {
         return hasMoved;
     }
 
-    private void switchblocks(Pane gameview, Tile curr, Tile block) {
+    private void switchblocks(Main.GameContext gameContext, Tile curr, Tile block) {
         Tile newTile = curr.collide(block);
-        tiles.remove(curr);
-        tiles.remove(block);
-        tiles.add(newTile);
-        gameview.getChildren().remove(curr);
-        gameview.getChildren().remove(block);
-        gameview.getChildren().add(newTile);
+        gameContext.removeTile(curr);
+        gameContext.removeTile(block);
+        gameContext.addTile(newTile);
         score += newTile.getWeight();
         System.out.println("Score: " + score);
     }
@@ -190,14 +187,15 @@ public class Board {
         tiles.add(tile);
     }
 
-    public void testPrint() {
-        for (Tile curr : tiles) {
-            System.out.println("Tile [" + curr.getPosX() + ", " + curr.getPosY() + "]");
-        }
-    }
-
     //TODO check is valid move exists on table.
     public boolean isValidMove() {
         return false;
+    }
+
+    public void removeTile(Tile tileToRemove) {
+        tiles.remove(tileToRemove);
+    }
+    public int size(){
+        return tiles.size();
     }
 }

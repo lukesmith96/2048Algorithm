@@ -17,7 +17,7 @@ enum Function{
     CORNER,
     STACK,
     MIX,
-    USER;
+    USER
 }
 /**
  * Created by lukes on 08-Jul-1 7.
@@ -31,10 +31,10 @@ public class UIController implements EventHandler<ActionEvent> {
     //public Task loop;
     public Thread thread;
     private Slider msSlider;
-    public UIController(Board board, Pane gameview){
+    public UIController(Main.GameContext gameContext){
         disableControllers();
         delay = 51;
-        dirController = new DirectionController(board, gameview);
+        dirController = new DirectionController(gameContext);
         currFunction = Function.USER;
     }
 
@@ -49,8 +49,8 @@ public class UIController implements EventHandler<ActionEvent> {
     public void handle(ActionEvent event) {
         if (((Button)event.getSource()).getText().equals("Random")){
             disableControllers();
+            /*
             running = true;
-            
             while(running){
                 randomRun();
                 try {
@@ -62,7 +62,7 @@ public class UIController implements EventHandler<ActionEvent> {
             }
             //loop = new RunLoop(delay, this, RANDOM);
             //thread = new Thread(loop);
-            //thread.start();
+            //thread.start();*/
         }
         if (((Button)event.getSource()).getText().equals("User Control")){
             System.out.println("YOU CLICKED USER");

@@ -13,46 +13,37 @@ enum Direction {
  * Created by lukes on 30-Jul-17.
  */
 public class DirectionController {
-    public Board board;
-    public Pane gameview;
+    public Main.GameContext gameContext;
 
-    public DirectionController(Board board, Pane gameview) {
-        this.board = board;
-        this.gameview = gameview;
+    public DirectionController(Main.GameContext gameContext) {
+        this.gameContext = gameContext;
     }
 
     public void move(Direction d){
         switch (d){
         case DOWN:
-            if (board.makeMove(Direction.DOWN, gameview)) {
-                Tile tile = board.createTile(false);
-                board.add(tile);
-                gameview.getChildren().add(tile);
+            if (gameContext.getBoard().makeMove(Direction.DOWN, gameContext)) {
+                gameContext.addTile(gameContext.getBoard().createTile(false));
             }
             break;
         case UP:
-            if (board.makeMove(Direction.UP, gameview)) {
-                Tile tile = board.createTile(false);
-                board.add(tile);
-                gameview.getChildren().add(tile);
+            if (gameContext.getBoard().makeMove(Direction.UP, gameContext)) {
+
+                gameContext.addTile(gameContext.getBoard().createTile(false));
             }
             break;
         case RIGHT:
-            if (board.makeMove(Direction.RIGHT, gameview)) {
-                Tile tile = board.createTile(false);
-                board.add(tile);
-                gameview.getChildren().add(tile);
+            if (gameContext.getBoard().makeMove(Direction.RIGHT, gameContext)) {
+                gameContext.addTile(gameContext.getBoard().createTile(false));
             }
             break;
         case LEFT:
-            if(board.makeMove(Direction.LEFT, gameview)) {
-                Tile tile = board.createTile(false);
-                board.add(tile);
-                gameview.getChildren().add(tile);
+            if(gameContext.getBoard().makeMove(Direction.LEFT, gameContext)) {
+                gameContext.addTile(gameContext.getBoard().createTile(false));
             }
             break;
         }
-        if (!board.isValidMove()) {
+        if (gameContext.getBoard().size() == 16 && !gameContext.getBoard().isValidMove()) {
             System.out.println("You LOST!");
         }
     }

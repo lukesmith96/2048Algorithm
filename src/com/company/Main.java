@@ -1,6 +1,7 @@
 package com.company;
 
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.*;
@@ -9,13 +10,12 @@ import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.StringConverter;
 
-import java.util.concurrent.TimeUnit;
-
-
 public class Main extends Application {
 
-    private Board board = new Board();
-    private Pane gameview = new Pane();
+    private GameContext gameContext;
+    private GameLoop gameLoop;
+    private Task<Void> gameThread;
+    private UIController buttonController;
 
     public Main() throws Exception {
     }
@@ -26,17 +26,49 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        // create UI root
         BorderPane root = createUI();
+        // set size
         root.setPrefSize(720, 630);
+        //create scene and add root
         Scene scene = new Scene(root);
         scene.getStylesheets().add("/com/company/UIStyle.css");
+        // Create stage and add scene
         primaryStage.setTitle("2048 Algorithms");
         primaryStage.setScene(scene);
+        // show scene
         primaryStage.show();
     }
 
     private BorderPane createUI() {
-        BorderPane pane = new BorderPane();
+        gameContext = new GameContext(new Pane(), new Board());
+        buttonController = new UIController(gameContext);
+
+        // Set Top Title View
+        BorderPane UI = new BorderPane();
+        UI.setTop(createTopTitle());
+
+        // Set Right button list
+        VBox algorithmList = createButtonUI(buttonController);
+        UI.setRight(algorithmList);
+
+        // Set bottom slider view
+        Slider msSlider = new Slider();
+        buttonController.setSliderRef(msSlider);
+        UI.setBottom(createSlider(msSlider, buttonController));
+
+        // Set key listener for user control
+        UI.setOnKeyPressed(new KeyListener(gameContext));
+
+        gameContext.gameview.setStyle("-fx-border-width:7px;");
+        gameContext.gameview.getChildren().addAll(gameContext.getBoard().getBackground());
+        gameContext.gameview.getChildren().addAll(gameContext.getBoard().getTiles());
+        UI.setCenter(gameContext.gameview);
+
+        return UI;
+    }
+
+    private Pane createTopTitle() {
         Pane top = new Pane();
         top.setPrefSize(600,90);
         Label header = new Label("2048 Algorithms Visualizer");
@@ -48,8 +80,10 @@ public class Main extends Application {
         Label author = new Label("Luke Smith");
         author = setCoordinates(author, 160, 43);
         top.getChildren().addAll(header, by, author);
-        pane.setTop(top);
+        return top;
+    }
 
+    private VBox createButtonUI(UIController buttonController) {
         VBox algorithmList = new VBox();
         algorithmList.setId("xbox");
         algorithmList.setPrefSize(250,300);
@@ -61,26 +95,15 @@ public class Main extends Application {
         Button s3Button = new Button("Mix Priority");
         Button s2Button = new Button("Stack Priority");
         Button s1Button = new Button("Corner Priority");
-        UIController buttonController = new UIController(board, gameview);
+
         randomButton.setOnAction(buttonController);
         s1Button.setOnAction(buttonController);
         s2Button.setOnAction(buttonController);
         s3Button.setOnAction(buttonController);
         userControlButton.setOnAction(buttonController);
 
-        Slider msSlider = new Slider();
-        pane.setBottom(createSlider(msSlider, buttonController));
-        buttonController.setSliderRef(msSlider);
-
         algorithmList.getChildren().addAll(randomButton, s1Button, s2Button, s3Button, userControlButton);
-        pane.setRight(algorithmList);
-
-        pane.setOnKeyPressed(new KeyListener(board, gameview));
-        gameview.setStyle("-fx-border-width:7px;");
-        gameview.getChildren().addAll(board.getBackground());
-        gameview.getChildren().addAll(board.getTiles());
-        pane.setCenter(gameview);
-        return pane;
+        return algorithmList;
     }
 
     private Pane createSlider(Slider msSlider, UIController buttonController) {
@@ -131,5 +154,27 @@ public class Main extends Application {
         label.setLayoutX(x);
         label.setLayoutY(y);
         return label;
+    }
+    public static class GameContext{
+        private Pane gameview;
+        private Board board;
+        GameContext(Pane gameview, Board board){
+            this.board = board;
+            this.gameview = gameview;
+        }
+        public Pane getGameview(){
+            return gameview;
+        }
+        public Board getBoard() {
+            return board;
+        }
+        public void addTile(Tile tile){
+            board.add(tile);
+            gameview.getChildren().add(tile);
+        }
+        public void removeTile(Tile tileToRemove){
+            board.removeTile(tileToRemove);
+            gameview.getChildren().remove(tileToRemove);
+        }
     }
 }
