@@ -28,19 +28,22 @@ public class UIController implements EventHandler<ActionEvent> {
     public static Function currFunction;
     public static DirectionController dirController;
     public static boolean running = false;
-    //public Task loop;
-    public Thread thread;
+    private Main.GameContext gameContext;
+    private GameLoop loop;
     private Slider msSlider;
     public UIController(Main.GameContext gameContext){
         disableControllers();
         delay = 51;
         dirController = new DirectionController(gameContext);
-        currFunction = Function.USER;
+        currFunction = USER;
+        this.gameContext = gameContext;
     }
 
     private void disableControllers() {
-        if (thread != null)
-            thread.interrupt();
+        if (loop != null) {
+            loop.interrupt();
+            System.out.println("Disabling loop");
+        }
         if(msSlider != null)
             msSlider.setDisable(false);
     }
@@ -49,20 +52,8 @@ public class UIController implements EventHandler<ActionEvent> {
     public void handle(ActionEvent event) {
         if (((Button)event.getSource()).getText().equals("Random")){
             disableControllers();
-            /*
-            running = true;
-            while(running){
-                randomRun();
-                try {
-                    Thread.sleep(delay);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                System.out.println("Ran Random at delay: " + delay);
-            }
-            //loop = new RunLoop(delay, this, RANDOM);
-            //thread = new Thread(loop);
-            //thread.start();*/
+            loop = new GameLoop(gameContext, this);
+            loop.start();
         }
         if (((Button)event.getSource()).getText().equals("User Control")){
             System.out.println("YOU CLICKED USER");
@@ -79,48 +70,6 @@ public class UIController implements EventHandler<ActionEvent> {
             disableControllers();
         }
     }
-
-    /*private class RunLoop extends Task<Void> {
-        boolean running = true;
-        Function function;
-        int delay;
-        UIController con;
-        public RunLoop(int delay, UIController controller, Function function){
-            this.delay = delay;
-            con = controller;
-            this.function = function;
-        }
-        @Override
-        public Void call() {
-            System.out.print("Call thread!!!!!");
-            while (running) {
-                System.out.println("Run! " + delay + " Function: " + function);
-                switch (function) {
-                    case RANDOM:
-                        con.randomRun();
-                        break;
-                    case CORNER:
-                        break;
-                    case MIX:
-                        break;
-                    case STACK:
-                        break;
-                }
-                System.out.print("Hello?");
-                try {
-                    delay = con.getDelay();
-                    System.out.println("Delay " + delay);
-                    //this.wait(delay);
-                    Thread.sleep(100);
-                    System.out.println("Thread Complete");
-                } catch (InterruptedException e) {
-                    System.out.println("INTERRUPT!");
-                    running = false;
-                }
-            }
-            return null;
-        }
-    }*/
 
     public int getDelay(){
         return delay;

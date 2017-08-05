@@ -1,6 +1,8 @@
 package com.company;
 
 import javafx.application.Application;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -102,7 +104,9 @@ public class Main extends Application {
         s3Button.setOnAction(buttonController);
         userControlButton.setOnAction(buttonController);
 
-        algorithmList.getChildren().addAll(randomButton, s1Button, s2Button, s3Button, userControlButton);
+        Label scoreLabel = new Label();
+        scoreLabel.textProperty().bind(gameContext.score.asString());
+        algorithmList.getChildren().addAll(randomButton, s1Button, s2Button, s3Button, userControlButton, scoreLabel);
         return algorithmList;
     }
 
@@ -158,9 +162,11 @@ public class Main extends Application {
     public static class GameContext{
         private Pane gameview;
         private Board board;
+        private IntegerProperty score;
         GameContext(Pane gameview, Board board){
             this.board = board;
             this.gameview = gameview;
+            score = new SimpleIntegerProperty();
         }
         public Pane getGameview(){
             return gameview;
@@ -175,6 +181,12 @@ public class Main extends Application {
         public void removeTile(Tile tileToRemove){
             board.removeTile(tileToRemove);
             gameview.getChildren().remove(tileToRemove);
+        }
+        public void updateScore(int value){
+            score.set(score.add(value).get());
+        }
+        public String getScoreString(){
+            return "Score: " + score;
         }
     }
 }

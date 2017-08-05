@@ -19,6 +19,7 @@ public class Board {
     public static final int BOARD_HEIGHT = 4;
     public static final Image defaultImage = new Image("/com/company/defaultSquare.jpg");
     private static int score;
+    private boolean hasMoved;
     private Group background = new Group();
     private ArrayList<Tile> tiles = new ArrayList<>();
 
@@ -37,7 +38,7 @@ public class Board {
     }
 
     public boolean makeMove(Direction d, Main.GameContext gameContext) {
-        boolean hasMoved = false;
+        hasMoved = false;
         int y, x;
         switch (d) {
             case UP:
@@ -125,6 +126,7 @@ public class Board {
         gameContext.removeTile(curr);
         gameContext.removeTile(block);
         gameContext.addTile(newTile);
+        gameContext.updateScore(newTile.getWeight());
         score += newTile.getWeight();
         System.out.println("Score: " + score);
     }
@@ -175,6 +177,9 @@ public class Board {
         int randWeight = rand.nextInt(5);
         Tile tile = new Tile(randX, randY, (randWeight == 4 && !lock) ? 4 : 2);
         return tile;
+    }
+    public boolean ifMoved(){
+        return hasMoved;
     }
 
     public Group getBackground() {return background; }

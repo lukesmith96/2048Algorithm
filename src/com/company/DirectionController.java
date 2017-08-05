@@ -1,6 +1,7 @@
 package com.company;
 
 
+import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 
 enum Direction {
@@ -20,27 +21,34 @@ public class DirectionController {
     }
 
     public void move(Direction d){
+        System.out.println("Going Direction: " + d.toString());
         switch (d){
         case DOWN:
-            if (gameContext.getBoard().makeMove(Direction.DOWN, gameContext)) {
-                gameContext.addTile(gameContext.getBoard().createTile(false));
-            }
+            Platform.runLater(() -> {
+                if (gameContext.getBoard().makeMove(Direction.DOWN, gameContext)) {
+                    gameContext.addTile(gameContext.getBoard().createTile(false));
+                }
+            });
             break;
         case UP:
-            if (gameContext.getBoard().makeMove(Direction.UP, gameContext)) {
-
-                gameContext.addTile(gameContext.getBoard().createTile(false));
-            }
+            Platform.runLater(() -> {
+                if(gameContext.getBoard().makeMove(Direction.UP, gameContext))
+                    gameContext.addTile(gameContext.getBoard().createTile(false));
+            });
             break;
         case RIGHT:
-            if (gameContext.getBoard().makeMove(Direction.RIGHT, gameContext)) {
-                gameContext.addTile(gameContext.getBoard().createTile(false));
-            }
+            Platform.runLater(() -> {
+                if (gameContext.getBoard().makeMove(Direction.RIGHT, gameContext)) {
+                    gameContext.addTile(gameContext.getBoard().createTile(false));
+                }
+            });
             break;
         case LEFT:
-            if(gameContext.getBoard().makeMove(Direction.LEFT, gameContext)) {
-                gameContext.addTile(gameContext.getBoard().createTile(false));
-            }
+            Platform.runLater(() -> {
+                if (gameContext.getBoard().makeMove(Direction.LEFT, gameContext)) {
+                    gameContext.addTile(gameContext.getBoard().createTile(false ));
+                }
+            });
             break;
         }
         if (gameContext.getBoard().size() == 16 && !gameContext.getBoard().isValidMove()) {
