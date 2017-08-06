@@ -105,6 +105,7 @@ public class Main extends Application {
         userControlButton.setOnAction(buttonController);
 
         Label scoreLabel = new Label();
+        scoreLabel.setId("score");
         scoreLabel.textProperty().bind(gameContext.score.asString());
         algorithmList.getChildren().addAll(randomButton, s1Button, s2Button, s3Button, userControlButton, scoreLabel);
         return algorithmList;

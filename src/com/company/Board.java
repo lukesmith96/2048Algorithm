@@ -2,7 +2,6 @@ package com.company;
 
 import javafx.scene.Group;
 import javafx.scene.image.Image;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import java.util.ArrayList;
@@ -42,13 +41,20 @@ public class Board {
         int y, x;
         switch (d) {
             case UP:
+                // check from 1st place to last y pos
                 for(y = 1; y < BOARD_HEIGHT; y++) {
+                    // clone tiles
                     ArrayList<Tile> temp = (ArrayList<Tile>)tiles.clone();
                     for (Tile curr : temp){
+                        // check if y equals current check
                         if (curr.getPosY() == y) {
+                            // check if this tile can move up returns the collided block if one exists
                             Tile block = canMove(Direction.UP, curr);
+                            // finds the y value to move to new if null then go to top otherwise go one below tile block
                             int yToMove = (block!=null)? block.getPosY() + 1 : 0;
-                            if (block != null && curr.canCollide(block)) {
+                            // if curr and block can collide
+                            if (block != null && curr.canCollide(block) &&  !curr.isAlreadyCollided() && !block.isAlreadyCollided()) {
+                                // can collide to switch
                                 switchblocks(gameContext, curr, block);
                                 hasMoved = true;
                             }
@@ -67,7 +73,7 @@ public class Board {
                         if (curr.getPosY() == y) {
                             Tile block = canMove(Direction.DOWN, curr);
                             int yToMove = (block!=null)? block.getPosY() - 1 : 3;
-                            if (block != null && curr.canCollide(block)){
+                            if (block != null && curr.canCollide(block) &&  !curr.isAlreadyCollided() && !block.isAlreadyCollided()){
                                 switchblocks(gameContext,curr,block);
                                 hasMoved = true;
                             }
@@ -86,7 +92,7 @@ public class Board {
                         if (curr.getPosX() == x) {
                             Tile block = canMove(Direction.LEFT, curr);
                             int xToMove = (block!=null)? block.getPosX() + 1 : 0;
-                            if (block != null && curr.canCollide(block)){
+                            if (block != null && curr.canCollide(block) &&  !curr.isAlreadyCollided() && !block.isAlreadyCollided()){
                                 switchblocks(gameContext,curr,block);
                                 hasMoved = true;
                             }
@@ -105,7 +111,7 @@ public class Board {
                         if (curr.getPosX() == x) {
                             Tile block = canMove(Direction.RIGHT, curr);
                             int xToMove = (block!=null)? block.getPosX() - 1 : 3;
-                            if (block != null && curr.canCollide(block)) {
+                            if (block != null && curr.canCollide(block) &&  !curr.isAlreadyCollided() && !block.isAlreadyCollided()) {
                                 switchblocks(gameContext, curr, block);
                                 hasMoved = true;
                             }
@@ -118,11 +124,15 @@ public class Board {
                 }
                 break;
         }
+        for (int cur = 0; cur < tiles.size(); cur++) {
+            tiles.get(cur).setCollided(false);
+        }
         return hasMoved;
     }
 
     private void switchblocks(Main.GameContext gameContext, Tile curr, Tile block) {
         Tile newTile = curr.collide(block);
+        newTile.setCollided(true);
         gameContext.removeTile(curr);
         gameContext.removeTile(block);
         gameContext.addTile(newTile);

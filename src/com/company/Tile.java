@@ -18,6 +18,8 @@ public class Tile extends StackPane {
     public static final int TILE_BORDER = 7;
     public static final Image defaultImage = new Image("/com/company/defaultSquare.jpg");
     private int posX, posY, weight;
+    private boolean collided;
+
     public Tile(int x, int y, int weight){
         posX = x;
         posY = y;
@@ -69,5 +71,13 @@ public class Tile extends StackPane {
         this.posX = newX;
         this.posY = newY;
         relocate(posX * TILE_SIZE + TILE_BORDER, posY * TILE_SIZE + TILE_BORDER);
+    }
+
+    public void setCollided(boolean collided) {
+        this.collided = collided;
+    }
+
+    public boolean isAlreadyCollided() {
+        return collided;
     }
 }
