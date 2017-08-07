@@ -1,5 +1,7 @@
 package com.company;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
@@ -12,54 +14,49 @@ import static com.company.Tile.TILE_SIZE;
  * Created by Luke Smith on 08-Jul-17.
  */
 
-public class Board {
+public class Board implements Cloneable{
 
     public static final int BOARD_WIDTH = 4;
     public static final int BOARD_HEIGHT = 4;
     public static final Image defaultImage = new Image("/com/company/defaultSquare.jpg");
-    private static int score;
+    public static IntegerProperty score;
     private boolean hasMoved;
     private Group background = new Group();
-    private ArrayList<Tile> tiles = new ArrayList<>();
+    private Tile[][] grid;
 
     Board() {
+        grid = new Tile[BOARD_WIDTH][BOARD_HEIGHT];
         for (int x =0; x < BOARD_WIDTH; x++) {
             for (int y = 0; y < BOARD_HEIGHT; y++){
                 Rectangle backg = new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                 ImagePattern pat = new ImagePattern(defaultImage);
                 backg.setFill(pat);
                 background.getChildren().add(backg);
+
+                grid[x][y] = null;
             }
         }
-        tiles.add(createTile(true));
-        tiles.add(createTile(true));
-        score = 0;
+        createTile(true);
+        createTile(true);
+        score = new SimpleIntegerProperty();
     }
 
-    public boolean makeMove(Direction d, Main.GameContext gameContext) {
+    public boolean move(Direction d) {
         hasMoved = false;
         int y, x;
         switch (d) {
             case UP:
                 // check from 1st place to last y pos
                 for(y = 1; y < BOARD_HEIGHT; y++) {
-                    // clone tiles
-                    ArrayList<Tile> temp = (ArrayList<Tile>)tiles.clone();
-                    for (Tile curr : temp){
-                        // check if y equals current check
-                        if (curr.getPosY() == y) {
-                            // check if this tile can move up returns the collided block if one exists
-                            Tile block = canMove(Direction.UP, curr);
-                            // finds the y value to move to new if null then go to top otherwise go one below tile block
-                            int yToMove = (block!=null)? block.getPosY() + 1 : 0;
-                            // if curr and block can collide
-                            if (block != null && curr.canCollide(block) &&  !curr.isAlreadyCollided() && !block.isAlreadyCollided()) {
-                                // can collide to switch
-                                switchblocks(gameContext, curr, block);
+                    for (x = 0; x < BOARD_WIDTH; x++) {
+                        if (grid[x][y] != null) {
+                            Tile blocker = canMove(Direction.UP, grid[x][y]);
+                            int yToMove = (blocker != null) ? blocker.getPosY() + 1 : 0;
+                            if (grid[x][y].canCollide(blocker) && !grid[x][y].isAlreadyCollided() && !blocker.isAlreadyCollided()) {
+                                collide(grid[x][y], blocker);
                                 hasMoved = true;
-                            }
-                            else if (yToMove != curr.getPosY()) {
-                                curr.move(curr.getPosX(), yToMove);
+                            } else if (yToMove != y) {
+                                moveTile(x, yToMove, grid[x][y]);
                                 hasMoved = true;
                             }
                         }
@@ -67,18 +64,16 @@ public class Board {
                 }
                 break;
             case DOWN:
-                for(y = 2; y >= 0; y--) {
-                    ArrayList<Tile> temp = (ArrayList<Tile>)tiles.clone();
-                    for (Tile curr : temp){
-                        if (curr.getPosY() == y) {
-                            Tile block = canMove(Direction.DOWN, curr);
-                            int yToMove = (block!=null)? block.getPosY() - 1 : 3;
-                            if (block != null && curr.canCollide(block) &&  !curr.isAlreadyCollided() && !block.isAlreadyCollided()){
-                                switchblocks(gameContext,curr,block);
+                for(y = BOARD_HEIGHT - 2; y >= 0 ; y--) {
+                    for (x = 0; x < BOARD_WIDTH; x++) {
+                        if (grid[x][y] != null) {
+                            Tile blocker = canMove(Direction.DOWN, grid[x][y]);
+                            int yToMove = (blocker != null) ? blocker.getPosY() - 1 : 3;
+                            if (grid[x][y].canCollide(blocker) && !grid[x][y].isAlreadyCollided() && !blocker.isAlreadyCollided()) {
+                                collide(grid[x][y], blocker);
                                 hasMoved = true;
-                            }
-                            else if (yToMove != curr.getPosY()) {
-                                curr.move(curr.getPosX(), yToMove);
+                            } else if (yToMove != y) {
+                                moveTile(x, yToMove, grid[x][y]);
                                 hasMoved = true;
                             }
                         }
@@ -87,17 +82,15 @@ public class Board {
                 break;
             case LEFT:
                 for(x = 1; x < BOARD_WIDTH; x++) {
-                    ArrayList<Tile> temp = (ArrayList<Tile>)tiles.clone();
-                    for (Tile curr : temp){
-                        if (curr.getPosX() == x) {
-                            Tile block = canMove(Direction.LEFT, curr);
-                            int xToMove = (block!=null)? block.getPosX() + 1 : 0;
-                            if (block != null && curr.canCollide(block) &&  !curr.isAlreadyCollided() && !block.isAlreadyCollided()){
-                                switchblocks(gameContext,curr,block);
+                    for (y = 0; y < BOARD_HEIGHT; y++) {
+                        if (grid[x][y] != null) {
+                            Tile blocker = canMove(Direction.LEFT, grid[x][y]);
+                            int xToMove = (blocker != null) ? blocker.getPosX() + 1 : 0;
+                            if (grid[x][y].canCollide(blocker) && !grid[x][y].isAlreadyCollided() && !blocker.isAlreadyCollided()) {
+                                collide(grid[x][y], blocker);
                                 hasMoved = true;
-                            }
-                            else if (xToMove != curr.getPosX()) {
-                                curr.move(xToMove, curr.getPosY());
+                            } else if (xToMove != x) {
+                                moveTile(xToMove, y, grid[x][y]);
                                 hasMoved = true;
                             }
                         }
@@ -105,18 +98,16 @@ public class Board {
                 }
                 break;
             case RIGHT:
-                for(x = 2; x >= 0; x--) {
-                    ArrayList<Tile> temp = (ArrayList<Tile>)tiles.clone();
-                    for (Tile curr : temp){
-                        if (curr.getPosX() == x) {
-                            Tile block = canMove(Direction.RIGHT, curr);
-                            int xToMove = (block!=null)? block.getPosX() - 1 : 3;
-                            if (block != null && curr.canCollide(block) &&  !curr.isAlreadyCollided() && !block.isAlreadyCollided()) {
-                                switchblocks(gameContext, curr, block);
+                for(x = BOARD_WIDTH - 2; x >= 0; x--) {
+                    for (y = 0; y < BOARD_HEIGHT; y++) {
+                        if (grid[x][y] != null) {
+                            Tile blocker = canMove(Direction.RIGHT, grid[x][y]);
+                            int xToMove = (blocker != null) ? blocker.getPosX() - 1 : 3;
+                            if (grid[x][y].canCollide(blocker) && !grid[x][y].isAlreadyCollided() && !blocker.isAlreadyCollided()) {
+                                collide(grid[x][y], blocker);
                                 hasMoved = true;
-                            }
-                            else if(xToMove != curr.getPosX()) {
-                                curr.move(xToMove, curr.getPosY());
+                            } else if (xToMove != x) {
+                                moveTile(xToMove, y, grid[x][y]);
                                 hasMoved = true;
                             }
                         }
@@ -124,52 +115,57 @@ public class Board {
                 }
                 break;
         }
-        for (int cur = 0; cur < tiles.size(); cur++) {
-            tiles.get(cur).setCollided(false);
-        }
+        for (x = 0; x < BOARD_WIDTH; x++)
+            for (y = 0; y < BOARD_HEIGHT; y++)
+                if (grid[x][y] != null)
+                    grid[x][y].setCollided(false);
         return hasMoved;
     }
 
-    private void switchblocks(Main.GameContext gameContext, Tile curr, Tile block) {
-        Tile newTile = curr.collide(block);
+    private void moveTile(int newx, int newy, Tile tile) {
+        grid[tile.getPosX()][tile.getPosY()] = null;
+        tile.move(newx, newy);
+        grid[newx][newy] = tile;
+    }
+
+    private void collide(Tile tile, Tile blocker) {
+        Tile newTile = new Tile(blocker.getPosX(), blocker.getPosY(), blocker.getWeight() * 2);
         newTile.setCollided(true);
-        gameContext.removeTile(curr);
-        gameContext.removeTile(block);
-        gameContext.addTile(newTile);
-        gameContext.updateScore(newTile.getWeight());
-        score += newTile.getWeight();
+        grid[blocker.getPosX()][blocker.getPosY()] = newTile;
+        grid[tile.getPosX()][tile.getPosY()] = null;
+        updateScore(newTile.getWeight());
         System.out.println("Score: " + score);
+    }
+
+    public void updateScore(int value){
+        score.set(score.add(value).get());
     }
 
     private Tile canMove(Direction d, Tile curr) {
         Tile toReturn = null;
         switch (d) {
             case UP:
-                for (Tile t : tiles) {
-                    if (t.getPosY() < curr.getPosY()  && t.getPosX() == curr.getPosX()) {
-                         toReturn = ((((toReturn != null)? toReturn.getPosY() : -1) < t.getPosY()) || toReturn == null)? t : toReturn;
-                    }
+                for (int y = curr.getPosY() - 1; y >= 0; y--){
+                    if (grid[curr.getPosX()][y] != null)
+                        toReturn = (toReturn == null)? grid[curr.getPosX()][y] : toReturn;
                 }
                 break;
             case DOWN:
-                for (Tile t : tiles) {
-                    if (t.getPosY() > curr.getPosY()  && t.getPosX() == curr.getPosX()) {
-                        toReturn = ((((toReturn != null)? toReturn.getPosY() : 4) > t.getPosY()) || toReturn == null)? t : toReturn;
-                    }
+                for (int y = curr.getPosY() + 1; y < BOARD_HEIGHT; y++){
+                    if (grid[curr.getPosX()][y] != null)
+                        toReturn = (toReturn == null)? grid[curr.getPosX()][y] : toReturn;
                 }
                 break;
             case LEFT:
-                for (Tile t : tiles) {
-                    if (t.getPosX() < curr.getPosX()  && t.getPosY() == curr.getPosY()) {
-                        toReturn = ((((toReturn != null)? toReturn.getPosX() : -1) < t.getPosX()) || toReturn == null)? t : toReturn;
-                    }
+                for (int x = curr.getPosX() - 1; x >= 0; x--){
+                    if (grid[x][curr.getPosY()] != null)
+                        toReturn = (toReturn == null)? grid[x][curr.getPosY()] : toReturn;
                 }
                 break;
             case RIGHT:
-                for (Tile t : tiles) {
-                    if (t.getPosX() > curr.getPosX()  && t.getPosY() == curr.getPosY()) {
-                        toReturn = ((((toReturn != null)? toReturn.getPosX() : 4) > t.getPosX()) || toReturn == null)? t : toReturn;
-                    }
+                for (int x = curr.getPosX() + 1; x < BOARD_WIDTH; x++){
+                    if (grid[x][curr.getPosY()] != null)
+                        toReturn = (toReturn == null)? grid[x][curr.getPosY()] : toReturn;
                 }
                 break;
         }
@@ -178,28 +174,26 @@ public class Board {
 
     public Tile createTile(boolean lock) {
         Random rand = new Random();
-        int randX = rand.nextInt(4);
-        int randY = rand.nextInt(4);
-        for (Tile tile : tiles) {
-            if (tile.getPosX() == randX && tile.getPosY() == randY)
-                return createTile(lock);
+        int randX = rand.nextInt(BOARD_WIDTH);
+        int randY = rand.nextInt(BOARD_HEIGHT);
+        if(grid[randX][randY] != null) {
+            return createTile(lock);
         }
         int randWeight = rand.nextInt(5);
         Tile tile = new Tile(randX, randY, (randWeight == 4 && !lock) ? 4 : 2);
+        grid[randX][randY] = tile;
         return tile;
-    }
-    public boolean ifMoved(){
-        return hasMoved;
     }
 
     public Group getBackground() {return background; }
 
     public ArrayList<Tile> getTiles() {
+        ArrayList<Tile> tiles = new ArrayList<>();
+        for (Tile[] row : grid)
+            for (Tile tile : row)
+                if (tile != null)
+                    tiles.add(tile);
         return tiles;
-    }
-
-    public void add(Tile tile) {
-        tiles.add(tile);
     }
 
     //TODO check is valid move exists on table.
@@ -207,10 +201,11 @@ public class Board {
         return false;
     }
 
-    public void removeTile(Tile tileToRemove) {
-        tiles.remove(tileToRemove);
-    }
-    public int size(){
-        return tiles.size();
+    public int size() {
+        int size = 0;
+        for (Tile[] row : grid)
+            for (Tile tile : row)
+                if(tile!=null)size++;
+        return size;
     }
 }

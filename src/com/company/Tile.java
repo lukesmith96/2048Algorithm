@@ -32,7 +32,7 @@ public class Tile extends StackPane {
         text.setFont(new Font(40));
         text.setStyle("-fx-font-weight: bold");
         text.setFill(new Color(0,0,0, 1));
-        this.getChildren().addAll(rect, text);
+        this.getChildren().addAll(rect,  text);
     }
 
     private Paint getColor(int weight) {
@@ -42,10 +42,6 @@ public class Tile extends StackPane {
                 "#3C3A32"};
         int pick = (int)(Math.log(weight) / Math.log(2)) - 1;
         return Color.web(colors[pick]);
-    }
-
-    public Tile collide(Tile tile) {
-        return new Tile(tile.getPosX(), tile.getPosY(), weight * 2);
     }
 
     public int getWeight(){
@@ -61,10 +57,9 @@ public class Tile extends StackPane {
     }
 
     public boolean canCollide(Tile block) {
-        if(this.getWeight() == block.getWeight())
+        if(block != null && this.getWeight() == block.getWeight())
             return true;
-        else
-            return false;
+        return false;
     }
 
     public void move(int newX, int newY) {

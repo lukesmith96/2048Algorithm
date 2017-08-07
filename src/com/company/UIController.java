@@ -70,7 +70,6 @@ public class UIController implements EventHandler<ActionEvent> {
             disableControllers();
         }
     }
-
     public int getDelay(){
         return delay;
     }

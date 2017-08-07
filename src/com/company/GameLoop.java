@@ -25,6 +25,7 @@ public class GameLoop extends Thread {
             int pick = new Random().nextInt(Direction.values().length);
             Direction curr = Direction.values()[pick];
             dirController.move(curr);
+            context.updateUI();
             try {
                 int delay = controller.getDelay();
                 System.out.println("Delay: " + delay);

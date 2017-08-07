@@ -1,6 +1,7 @@
 package com.company;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.concurrent.Task;
@@ -106,7 +107,7 @@ public class Main extends Application {
 
         Label scoreLabel = new Label();
         scoreLabel.setId("score");
-        scoreLabel.textProperty().bind(gameContext.score.asString());
+        scoreLabel.textProperty().bind(gameContext.board.score.asString());
         algorithmList.getChildren().addAll(randomButton, s1Button, s2Button, s3Button, userControlButton, scoreLabel);
         return algorithmList;
     }
@@ -172,22 +173,17 @@ public class Main extends Application {
         public Pane getGameview(){
             return gameview;
         }
+
         public Board getBoard() {
             return board;
         }
-        public void addTile(Tile tile){
-            board.add(tile);
-            gameview.getChildren().add(tile);
-        }
-        public void removeTile(Tile tileToRemove){
-            board.removeTile(tileToRemove);
-            gameview.getChildren().remove(tileToRemove);
-        }
-        public void updateScore(int value){
-            score.set(score.add(value).get());
-        }
-        public String getScoreString(){
-            return "Score: " + score;
+
+        public void updateUI() {
+            Platform.runLater(() -> {
+                gameview.getChildren().clear();
+                gameview.getChildren().addAll(board.getBackground());
+                gameview.getChildren().addAll(board.getTiles());
+            });
         }
     }
 }
