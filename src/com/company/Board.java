@@ -14,25 +14,36 @@ import static com.company.Tile.TILE_SIZE;
  * Created by Luke Smith on 08-Jul-17.
  */
 
-public class Board implements Cloneable{
+public class Board implements Cloneable {
 
     public static final int BOARD_WIDTH = 4;
     public static final int BOARD_HEIGHT = 4;
-    public static final Image defaultImage = new Image("/com/company/defaultSquare.jpg");
-    public static IntegerProperty score;
+
+    public IntegerProperty score;
     private boolean hasMoved;
-    private Group background = new Group();
     private Tile[][] grid;
 
-    Board() {
-        grid = new Tile[BOARD_WIDTH][BOARD_HEIGHT];
-        for (int x =0; x < BOARD_WIDTH; x++) {
-            for (int y = 0; y < BOARD_HEIGHT; y++){
-                Rectangle backg = new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                ImagePattern pat = new ImagePattern(defaultImage);
-                backg.setFill(pat);
-                background.getChildren().add(backg);
 
+    public Board(Tile[][] grid) {
+        this.grid = grid;
+        score = new SimpleIntegerProperty();
+    }
+
+    @Override
+    public Board clone() {
+        Tile[][] newGrid = new Tile[BOARD_HEIGHT][BOARD_WIDTH];
+        for (int i = 0; i < BOARD_WIDTH; i++) {
+            for (int j = 0; j < BOARD_HEIGHT; j++) {
+                newGrid[i][j] = (grid[i][j] == null)? null : grid[i][j].clone();
+            }
+        }
+        return new Board(newGrid);
+    }
+
+    public Board() {
+        this.grid = new Tile[BOARD_WIDTH][BOARD_HEIGHT];
+        for (int x = 0; x < BOARD_WIDTH; x++) {
+            for (int y = 0; y < BOARD_HEIGHT; y++) {
                 grid[x][y] = null;
             }
         }
@@ -41,7 +52,8 @@ public class Board implements Cloneable{
         score = new SimpleIntegerProperty();
     }
 
-    public boolean move(Direction d) {
+    public int move(Direction d) {
+        int moveScore = 0;
         hasMoved = false;
         int y, x;
         switch (d) {
@@ -53,7 +65,7 @@ public class Board implements Cloneable{
                             Tile blocker = canMove(Direction.UP, grid[x][y]);
                             int yToMove = (blocker != null) ? blocker.getPosY() + 1 : 0;
                             if (grid[x][y].canCollide(blocker) && !grid[x][y].isAlreadyCollided() && !blocker.isAlreadyCollided()) {
-                                collide(grid[x][y], blocker);
+                                moveScore = collide(grid[x][y], blocker);
                                 hasMoved = true;
                             } else if (yToMove != y) {
                                 moveTile(x, yToMove, grid[x][y]);
@@ -70,7 +82,7 @@ public class Board implements Cloneable{
                             Tile blocker = canMove(Direction.DOWN, grid[x][y]);
                             int yToMove = (blocker != null) ? blocker.getPosY() - 1 : 3;
                             if (grid[x][y].canCollide(blocker) && !grid[x][y].isAlreadyCollided() && !blocker.isAlreadyCollided()) {
-                                collide(grid[x][y], blocker);
+                                moveScore = collide(grid[x][y], blocker);
                                 hasMoved = true;
                             } else if (yToMove != y) {
                                 moveTile(x, yToMove, grid[x][y]);
@@ -87,7 +99,7 @@ public class Board implements Cloneable{
                             Tile blocker = canMove(Direction.LEFT, grid[x][y]);
                             int xToMove = (blocker != null) ? blocker.getPosX() + 1 : 0;
                             if (grid[x][y].canCollide(blocker) && !grid[x][y].isAlreadyCollided() && !blocker.isAlreadyCollided()) {
-                                collide(grid[x][y], blocker);
+                                moveScore = collide(grid[x][y], blocker);
                                 hasMoved = true;
                             } else if (xToMove != x) {
                                 moveTile(xToMove, y, grid[x][y]);
@@ -104,7 +116,7 @@ public class Board implements Cloneable{
                             Tile blocker = canMove(Direction.RIGHT, grid[x][y]);
                             int xToMove = (blocker != null) ? blocker.getPosX() - 1 : 3;
                             if (grid[x][y].canCollide(blocker) && !grid[x][y].isAlreadyCollided() && !blocker.isAlreadyCollided()) {
-                                collide(grid[x][y], blocker);
+                                moveScore = collide(grid[x][y], blocker);
                                 hasMoved = true;
                             } else if (xToMove != x) {
                                 moveTile(xToMove, y, grid[x][y]);
@@ -119,7 +131,7 @@ public class Board implements Cloneable{
             for (y = 0; y < BOARD_HEIGHT; y++)
                 if (grid[x][y] != null)
                     grid[x][y].setCollided(false);
-        return hasMoved;
+        return (hasMoved)? moveScore : -1;
     }
 
     private void moveTile(int newx, int newy, Tile tile) {
@@ -128,13 +140,13 @@ public class Board implements Cloneable{
         grid[newx][newy] = tile;
     }
 
-    private void collide(Tile tile, Tile blocker) {
+    private int collide(Tile tile, Tile blocker) {
         Tile newTile = new Tile(blocker.getPosX(), blocker.getPosY(), blocker.getWeight() * 2);
         newTile.setCollided(true);
         grid[blocker.getPosX()][blocker.getPosY()] = newTile;
         grid[tile.getPosX()][tile.getPosY()] = null;
-        updateScore(newTile.getWeight());
-        System.out.println("Score: " + score);
+        //updateScore(newTile.getWeight());
+        return newTile.getWeight();
     }
 
     public void updateScore(int value){
@@ -185,8 +197,6 @@ public class Board implements Cloneable{
         return tile;
     }
 
-    public Group getBackground() {return background; }
-
     public ArrayList<Tile> getTiles() {
         ArrayList<Tile> tiles = new ArrayList<>();
         for (Tile[] row : grid)
@@ -197,8 +207,27 @@ public class Board implements Cloneable{
     }
 
     //TODO check is valid move exists on table.
-    public boolean isValidMove() {
-        return false;
+    public boolean hasValidMove() {
+        if (size() < (BOARD_WIDTH * BOARD_HEIGHT))
+            return true;
+        boolean canMove = false;
+        for(int x = 0; x < BOARD_WIDTH; x++) {
+            for (int y = 0; y < BOARD_HEIGHT; y++) {
+                if (x > 0)
+                    //check left
+                    canMove = (canMove)? canMove : grid[x][y].canCollide(grid[x-1][y]);
+                if (y > 0)
+                    //check up
+                    canMove = (canMove)? canMove : grid[x][y].canCollide(grid[x][y-1]);
+                if (x < BOARD_WIDTH - 1)
+                    // check right
+                    canMove = (canMove)? canMove : grid[x][y].canCollide(grid[x+1][y]);
+                if (y < BOARD_HEIGHT - 1)
+                    // check down
+                    canMove = (canMove)? canMove : grid[x][y].canCollide(grid[x][y+1]);
+            }
+        }
+        return canMove;
     }
 
     public int size() {
@@ -207,5 +236,19 @@ public class Board implements Cloneable{
             for (Tile tile : row)
                 if(tile!=null)size++;
         return size;
+    }
+
+    public Tile[][] getGrid() {
+        return grid;
+    }
+
+    public Tile[][] cloneGrid() {
+        Tile[][] newGrid = new Tile[BOARD_HEIGHT][BOARD_WIDTH];
+        for (int i = 0; i < BOARD_WIDTH; i++) {
+            for (int j = 0; j < BOARD_HEIGHT; j++) {
+                newGrid[i][j] = (grid[i][j] == null)? null : grid[i][j].clone();
+            }
+        }
+        return newGrid;
     }
 }

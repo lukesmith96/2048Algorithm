@@ -1,9 +1,6 @@
 package com.company;
 
 
-import javafx.application.Platform;
-import javafx.scene.layout.Pane;
-
 enum Direction {
     UP(0),
     DOWN(1),
@@ -40,10 +37,10 @@ public class DirectionController {
 
     public void move(Direction d){
         System.out.println("Going Direction: " + d.toString());
-        if (gameContext.getBoard().move(d)) {
+        if (gameContext.getBoard().move(d) >= 0) {
             gameContext.getBoard().createTile(false);
         }
-        if (gameContext.getBoard().size() == 16 && !gameContext.getBoard().isValidMove()) {
+        if (gameContext.getBoard().size() == 16 && !gameContext.getBoard().hasValidMove()) {
             System.out.println("You LOST!");
         }
     }

@@ -9,9 +9,16 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.*;
 import javafx.util.StringConverter;
+
+import java.util.Iterator;
+
+import static com.company.Tile.TILE_SIZE;
 
 public class Main extends Application {
 
@@ -19,6 +26,8 @@ public class Main extends Application {
     private GameLoop gameLoop;
     private Task<Void> gameThread;
     private UIController buttonController;
+    public final Image defaultImage = new Image("/com/company/defaultSquare.jpg");
+    private static Group background = new Group();
 
     public Main() throws Exception {
     }
@@ -63,9 +72,22 @@ public class Main extends Application {
         // Set key listener for user control
         UI.setOnKeyPressed(new KeyListener(gameContext));
 
+        for (int x =0; x < Board.BOARD_WIDTH; x++) {
+            for (int y = 0; y < Board.BOARD_HEIGHT; y++) {
+                Rectangle backg = new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                ImagePattern pat = new ImagePattern(defaultImage);
+                backg.setFill(pat);
+                background.getChildren().add(backg);
+            }
+        }
+
+
         gameContext.gameview.setStyle("-fx-border-width:7px;");
-        gameContext.gameview.getChildren().addAll(gameContext.getBoard().getBackground());
-        gameContext.gameview.getChildren().addAll(gameContext.getBoard().getTiles());
+        gameContext.gameview.getChildren().addAll(background);//gameContext.getBoard().getBackground());
+
+        for (Tile tile : gameContext.board.getTiles()) {
+            gameContext.gameview.getChildren().add(tile.updateTileUI());
+        }
         UI.setCenter(gameContext.gameview);
 
         return UI;
@@ -181,8 +203,10 @@ public class Main extends Application {
         public void updateUI() {
             Platform.runLater(() -> {
                 gameview.getChildren().clear();
-                gameview.getChildren().addAll(board.getBackground());
-                gameview.getChildren().addAll(board.getTiles());
+                gameview.getChildren().addAll(background);
+                for (Tile tile : board.getTiles()) {
+                    gameview.getChildren().add(tile.updateTileUI());
+                }
             });
         }
     }
