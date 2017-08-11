@@ -16,7 +16,7 @@ enum Function{
     RANDOM,
     CORNER,
     STACK,
-    MIX,
+    DDFS,
     USER
 }
 /**
@@ -27,16 +27,17 @@ public class UIController implements EventHandler<ActionEvent> {
     public static int delay;
     public static Function currFunction;
     public static DirectionController dirController;
-    public static boolean running = false;
     private Main.GameContext gameContext;
     private GameLoop loop;
     private Slider msSlider;
+
     public UIController(Main.GameContext gameContext){
         disableControllers();
         delay = 51;
         dirController = new DirectionController(gameContext);
         currFunction = USER;
         this.gameContext = gameContext;
+        loop = new GameLoop(gameContext, this);
     }
 
     private void disableControllers() {
@@ -50,38 +51,49 @@ public class UIController implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent event) {
-        if (((Button)event.getSource()).getText().equals("Random")){
+        if (((Button) event.getSource()).getText().equals("Random")) {
             disableControllers();
+            currFunction = RANDOM;
             loop = new GameLoop(gameContext, this);
             loop.start();
         }
-        if (((Button)event.getSource()).getText().equals("User Control")){
-            System.out.println("YOU CLICKED USER");
+        if (((Button) event.getSource()).getText().equals("User Control")) {
             disableControllers();
             msSlider.setDisable(true);
+            currFunction = USER;
         }
-        if (((Button)event.getSource()).getText().equals("Corner Priority")){
+        if (((Button) event.getSource()).getText().equals("Corner Priority")) {
             disableControllers();
+            currFunction = CORNER;
+            loop = new GameLoop(gameContext, this);
+            loop.start();
         }
-        if (((Button)event.getSource()).getText().equals("Stack Priority")){
+        if (((Button) event.getSource()).getText().equals("Stack Priority")) {
             disableControllers();
+            currFunction = STACK;
+            loop = new GameLoop(gameContext, this);
+            loop.start();
         }
-        if (((Button)event.getSource()).getText().equals("Mix Priority")){
+        if (((Button) event.getSource()).getText().equals("Deterministic DFS")) {
             disableControllers();
+            currFunction = DDFS;
+            loop = new GameLoop(gameContext, this);
+            loop.start();
         }
     }
     public int getDelay(){
         return delay;
     }
-    public void randomRun(){
-        int pick = new Random().nextInt(Direction.values().length);
-        Direction curr = Direction.values()[pick];
-        dirController.move(curr);
-    }
+
     public  void setSliderRef(Slider msSlider){
         this.msSlider = msSlider;
     }
+
     public void setDelay(int delay) {
         this.delay = delay;
+    }
+
+    public Function getCurrentFunction() {
+        return currFunction;
     }
 }

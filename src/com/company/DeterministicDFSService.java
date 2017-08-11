@@ -1,14 +1,13 @@
 package com.company;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
  * Created by lukes on 06-Aug-17.
  */
-public class CornerStrategyService {
+public class DeterministicDFSService {
 
-    public CornerStrategyService(){}
+    public DeterministicDFSService(){}
 
     public Direction getBestMove(Board board, int runs) {
         int bestScore = 0;

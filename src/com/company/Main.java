@@ -117,7 +117,7 @@ public class Main extends Application {
 
         Button randomButton = new Button("Random");
         Button userControlButton = new Button("User Control");
-        Button s3Button = new Button("Mix Priority");
+        Button s3Button = new Button("Deterministic DFS");
         Button s2Button = new Button("Stack Priority");
         Button s1Button = new Button("Corner Priority");
 

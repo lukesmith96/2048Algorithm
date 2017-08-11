@@ -37,7 +37,9 @@ public class DirectionController {
 
     public void move(Direction d){
         System.out.println("Going Direction: " + d.toString());
-        if (gameContext.getBoard().move(d) >= 0) {
+        int mvScore;
+        if ((mvScore = gameContext.getBoard().move(d)) >= 0) {
+            gameContext.getBoard().updateScore(mvScore);
             gameContext.getBoard().createTile(false);
         }
         if (gameContext.getBoard().size() == 16 && !gameContext.getBoard().hasValidMove()) {

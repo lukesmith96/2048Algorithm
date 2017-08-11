@@ -30,8 +30,6 @@ public class KeyListener implements EventHandler<KeyEvent> {
         if (event.getCode() == KeyCode.RIGHT && UIController.currFunction == Function.USER) {
             dirControl.move(Direction.RIGHT);
         }
-        if (event.getCode() == KeyCode.SPACE)
-            UIController.running = false;
 
         gameContext.updateUI();
         event.consume();

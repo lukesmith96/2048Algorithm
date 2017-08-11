@@ -1,14 +1,12 @@
 package com.company;
 
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.scene.Group;
-import javafx.scene.image.Image;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Rectangle;
 import java.util.ArrayList;
 import java.util.Random;
-import static com.company.Tile.TILE_SIZE;
+
+import static com.company.Function.DDFS;
 
 /**
  * Created by Luke Smith on 08-Jul-17.
@@ -145,12 +143,18 @@ public class Board implements Cloneable {
         newTile.setCollided(true);
         grid[blocker.getPosX()][blocker.getPosY()] = newTile;
         grid[tile.getPosX()][tile.getPosY()] = null;
-        //updateScore(newTile.getWeight());
+        //if (UIController.currFunction != DDFS)
+        //    updateScore(newTile.getWeight());
         return newTile.getWeight();
     }
 
     public void updateScore(int value){
-        score.set(score.add(value).get());
+        try {
+            Platform.runLater(()->score.set(score.add(value).get()));
+        }
+        catch (Exception e){
+            System.out.println("Score Error!");
+        }
     }
 
     private Tile canMove(Direction d, Tile curr) {
