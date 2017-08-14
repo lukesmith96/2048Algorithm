@@ -42,8 +42,6 @@ public class DirectionController {
             gameContext.getBoard().updateScore(mvScore);
             gameContext.getBoard().createTile(false);
         }
-        if (gameContext.getBoard().size() == 16 && !gameContext.getBoard().hasValidMove()) {
-            System.out.println("You LOST!");
-        }
+
     }
 }

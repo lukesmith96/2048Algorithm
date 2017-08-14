@@ -6,10 +6,9 @@ import javafx.beans.property.SimpleIntegerProperty;
 import java.util.ArrayList;
 import java.util.Random;
 
-import static com.company.Function.DDFS;
-
 /**
  * Created by Luke Smith on 08-Jul-17.
+ * TODO not happy with class structure needs refactoring
  */
 
 public class Board implements Cloneable {
@@ -156,7 +155,31 @@ public class Board implements Cloneable {
             System.out.println("Score Error!");
         }
     }
-
+    public Boolean hasValidMove(Direction d){
+        for (int x = 0; x < BOARD_WIDTH; x++) {
+            for (int y = 0; y < BOARD_HEIGHT; y++) {
+                if (grid[x][y] != null) {
+                    Tile t = canMove(d, grid[x][y]);
+                    if (t != null)
+                        if (grid[x][y].canCollide(t) == true)
+                            return true;
+                    if (t == null) {
+                        if ((x != 0 && d == Direction.LEFT) || (y != 0 && d == Direction.UP)
+                                || (x != (BOARD_WIDTH - 1) && d == Direction.RIGHT)
+                                || (y != (BOARD_HEIGHT - 1) && d == Direction.DOWN))
+                            return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    /*@param Tile curr: the tile to evaluate
+    * @param Direction d to evaluate
+    *
+    * returns the first tile that collides with the current tile traveling the given direction
+    * if there is no tile then it can move all the way to end
+    */
     private Tile canMove(Direction d, Tile curr) {
         Tile toReturn = null;
         switch (d) {
