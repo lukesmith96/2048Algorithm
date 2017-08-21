@@ -18,19 +18,12 @@ public class KeyListener implements EventHandler<KeyEvent> {
 
     @Override
     public void handle(KeyEvent event) {
-        if (event.getCode() == KeyCode.UP && UIController.currFunction == Function.USER) {
-            dirControl.move(Direction.UP);
+        if ((event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN
+                || event.getCode() == KeyCode.LEFT
+                || event.getCode() == KeyCode.RIGHT)
+                && UIController.currFunction == Function.USER) {
+            dirControl.move(Direction.valueOf(event.getCode().getName().toUpperCase()));
         }
-        if (event.getCode() == KeyCode.DOWN && UIController.currFunction == Function.USER) {
-            dirControl.move(Direction.DOWN);
-        }
-        if (event.getCode() == KeyCode.LEFT && UIController.currFunction == Function.USER) {
-            dirControl.move(Direction.LEFT);
-        }
-        if (event.getCode() == KeyCode.RIGHT && UIController.currFunction == Function.USER) {
-            dirControl.move(Direction.RIGHT);
-        }
-
         gameContext.updateUI();
         event.consume();
     }

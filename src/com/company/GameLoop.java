@@ -42,7 +42,6 @@ public class GameLoop extends Thread {
             }
             if (nextDir == null){
                 //ToDo you lost!
-                running = false;
                 break;
             }
             dirController.move(nextDir);

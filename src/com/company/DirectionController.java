@@ -2,27 +2,23 @@ package com.company;
 
 
 enum Direction {
-    UP(0),
-    DOWN(1),
-    RIGHT(2),
-    LEFT(3);
-    private int value;
+    UP,
+    DOWN,
+    RIGHT,
+    LEFT;
 
-    public static Direction getDir(int value){
+    public static Direction getDir(int value) {
         switch (value) {
-            case 0: return UP;
-            case 1: return DOWN;
-            case 2: return RIGHT;
-            case 3: return LEFT;
+            case 0:
+                return UP;
+            case 1:
+                return DOWN;
+            case 2:
+                return RIGHT;
+            case 3:
+                return LEFT;
         }
         return null;
-    }
-    public int getValue(){
-        return value;
-    }
-
-    Direction(int value) {
-        this.value = value;
     }
 }
 /**

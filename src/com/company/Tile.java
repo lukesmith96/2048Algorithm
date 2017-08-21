@@ -1,6 +1,5 @@
 package com.company;
 
-import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -16,7 +15,6 @@ public class Tile implements Cloneable {
 
     public static final int TILE_SIZE = 121;
     public static final int TILE_BORDER = 7;
-    public static final Image defaultImage = new Image("/com/company/defaultSquare.jpg");
     private int posX, posY, weight;
     private boolean collided;
 
@@ -24,14 +22,6 @@ public class Tile implements Cloneable {
         posX = x;
         posY = y;
         this.weight = weight;
-        /*Rectangle rect = new Rectangle(0,0, TILE_SIZE - (TILE_BORDER * 2),TILE_SIZE - (TILE_BORDER * 2));
-        rect.setFill(getColor(weight));
-        relocate(x * TILE_SIZE + TILE_BORDER, y * TILE_SIZE + TILE_BORDER);
-        Text text = new Text(weight + "");
-        text.setFont(new Font(40));
-        text.setStyle("-fx-font-weight: bold");
-        text.setFill(new Color(0,0,0, 1));
-        this.getChildren().addAll(rect,  text);*/
     }
     public StackPane updateTileUI(){
         Rectangle rect = new Rectangle(0,0, TILE_SIZE - (TILE_BORDER * 2),TILE_SIZE - (TILE_BORDER * 2));

@@ -2,9 +2,6 @@ package com.company;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.*;
@@ -16,21 +13,14 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.*;
 import javafx.util.StringConverter;
 
-import java.util.Iterator;
-
 import static com.company.Tile.TILE_SIZE;
 
 public class Main extends Application {
 
     private GameContext gameContext;
-    private GameLoop gameLoop;
-    private Task<Void> gameThread;
     private UIController buttonController;
     public final Image defaultImage = new Image("/com/company/defaultSquare.jpg");
     private static Group background = new Group();
-
-    public Main() throws Exception {
-    }
 
     public static void main(String[] args) {
         launch(args);
@@ -186,14 +176,9 @@ public class Main extends Application {
     public static class GameContext{
         private Pane gameview;
         private Board board;
-        private IntegerProperty score;
         GameContext(Pane gameview, Board board){
             this.board = board;
             this.gameview = gameview;
-            score = new SimpleIntegerProperty();
-        }
-        public Pane getGameview(){
-            return gameview;
         }
 
         public Board getBoard() {
