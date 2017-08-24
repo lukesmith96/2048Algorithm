@@ -30,12 +30,11 @@ public class DirectionController {
     public DirectionController(Main.GameContext gameContext) {
         this.gameContext = gameContext;
     }
-
-    public void move(Direction d){
+     public void move(Direction d){
         System.out.println("Going Direction: " + d.toString());
         int mvScore;
         if ((mvScore = gameContext.getBoard().move(d)) >= 0) {
-            gameContext.getBoard().updateScore(mvScore);
+            gameContext.updateScore(mvScore);
             gameContext.getBoard().createTile(false);
         }
 

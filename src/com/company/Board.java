@@ -15,14 +15,12 @@ public class Board implements Cloneable {
     public static final int BOARD_WIDTH = 4;
     public static final int BOARD_HEIGHT = 4;
 
-    public IntegerProperty score;
     private boolean hasMoved;
     private Tile[][] grid;
-
+    public int selfScore = 0;
 
     public Board(Tile[][] grid) {
         this.grid = grid;
-        score = new SimpleIntegerProperty();
     }
 
     @Override
@@ -45,7 +43,6 @@ public class Board implements Cloneable {
         }
         createTile(true);
         createTile(true);
-        score = new SimpleIntegerProperty();
     }
 
     public int move(Direction d) {
@@ -148,22 +145,10 @@ public class Board implements Cloneable {
         newTile.setCollided(true);
         grid[blocker.getPosX()][blocker.getPosY()] = newTile;
         grid[tile.getPosX()][tile.getPosY()] = null;
+        selfScore+=newTile.getWeight();
         return newTile.getWeight();
     }
 
-    /*
-    * Update's score value associated with the board
-    * Has to be called in Platform.runLater because
-    * it is bound to UI in the case of the master board.
-     */
-    public void updateScore(int value){
-        try {
-            Platform.runLater(()->score.set(score.add(value).get()));
-        }
-        catch (Exception e){
-            System.out.println("Score Error!");
-        }
-    }
     /*
     * @param Tile curr: the tile to evaluate
     * @param Direction d to evaluate
