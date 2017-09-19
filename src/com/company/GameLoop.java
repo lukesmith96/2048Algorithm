@@ -1,8 +1,5 @@
 package com.company;
 
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-
 import java.util.Random;
 
 /**
@@ -37,16 +34,22 @@ public class GameLoop extends Thread {
                     nextDir = getNextMoveCornerPriority();
                     break;
                 case DDFS:
-                    nextDir = ddfs.getBestMove(context.getBoard().clone(), 1000);
+                    int[] set = ddfs.getBestMove(context.getBoard().clone(), 1000);
+                    nextDir = Direction.getDir(set[1]);
+                    break;
+                case LOOKAHEAD:
+                    int[] sets = ddfs.lookAheadDDFS(context.getBoard().clone(), 4);
+                    nextDir = Direction.getDir(sets[1]);
                     break;
             }
             if (nextDir == null){
                 //ToDo you lost!
-                running = false;
                 break;
             }
+
             dirController.move(nextDir);
             context.updateUI();
+
             if (context.getBoard().size() == 16 && !context.getBoard().hasValidMove()) {
                 System.out.println("You LOST!");
                 break;

@@ -118,7 +118,7 @@ public class Main extends Application {
         Button randomButton = new Button("Random");
         Button userControlButton = new Button("User Control");
         Button s3Button = new Button("Deterministic DFS");
-        Button s2Button = new Button("Stack Priority");
+        Button s2Button = new Button("Look Ahead");
         Button s1Button = new Button("Corner Priority");
 
         randomButton.setOnAction(buttonController);
@@ -129,7 +129,7 @@ public class Main extends Application {
 
         Label scoreLabel = new Label();
         scoreLabel.setId("score");
-        scoreLabel.textProperty().bind(gameContext.board.score.asString());
+        scoreLabel.textProperty().bind(gameContext.score.asString());
         algorithmList.getChildren().addAll(randomButton, s1Button, s2Button, s3Button, userControlButton, scoreLabel);
         return algorithmList;
     }
@@ -186,14 +186,12 @@ public class Main extends Application {
     public static class GameContext{
         private Pane gameview;
         private Board board;
-        private IntegerProperty score;
+        public IntegerProperty score;
+
         GameContext(Pane gameview, Board board){
             this.board = board;
             this.gameview = gameview;
             score = new SimpleIntegerProperty();
-        }
-        public Pane getGameview(){
-            return gameview;
         }
 
         public Board getBoard() {
@@ -208,6 +206,14 @@ public class Main extends Application {
                     gameview.getChildren().add(tile.updateTileUI());
                 }
             });
+        }
+        public void updateScore(int value){
+            try {
+                Platform.runLater(()-> this.score.set(this.score.getValue() + value));
+            }
+            catch (Exception e){
+                System.out.println("Score Error!");
+            }
         }
     }
 }

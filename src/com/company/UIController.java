@@ -1,22 +1,18 @@
 package com.company;
 
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
-import javafx.scene.layout.Pane;
-
-import java.util.Random;
 
 import static com.company.Function.*;
-
 
 enum Function{
     RANDOM,
     CORNER,
     STACK,
     DDFS,
+    LOOKAHEAD,
     USER
 }
 /**
@@ -24,9 +20,8 @@ enum Function{
  */
 public class UIController implements EventHandler<ActionEvent> {
 
-    public static int delay;
+    private int delay;
     public static Function currFunction;
-    public static DirectionController dirController;
     private Main.GameContext gameContext;
     private GameLoop loop;
     private Slider msSlider;
@@ -34,7 +29,6 @@ public class UIController implements EventHandler<ActionEvent> {
     public UIController(Main.GameContext gameContext){
         disableControllers();
         delay = 51;
-        dirController = new DirectionController(gameContext);
         currFunction = USER;
         this.gameContext = gameContext;
         loop = new GameLoop(gameContext, this);
@@ -54,29 +48,24 @@ public class UIController implements EventHandler<ActionEvent> {
         if (((Button) event.getSource()).getText().equals("Random")) {
             disableControllers();
             currFunction = RANDOM;
-            loop = new GameLoop(gameContext, this);
-            loop.start();
+        }
+        if (((Button) event.getSource()).getText().equals("Corner Priority")) {
+            disableControllers();
+            currFunction = CORNER;
+        }
+        if (((Button) event.getSource()).getText().equals("Look Ahead")) {
+            disableControllers();
+            currFunction = LOOKAHEAD;
+        }
+        if (((Button) event.getSource()).getText().equals("Deterministic DFS")) {
+            disableControllers();
+            currFunction = DDFS;
         }
         if (((Button) event.getSource()).getText().equals("User Control")) {
             disableControllers();
             msSlider.setDisable(true);
             currFunction = USER;
-        }
-        if (((Button) event.getSource()).getText().equals("Corner Priority")) {
-            disableControllers();
-            currFunction = CORNER;
-            loop = new GameLoop(gameContext, this);
-            loop.start();
-        }
-        if (((Button) event.getSource()).getText().equals("Stack Priority")) {
-            disableControllers();
-            currFunction = STACK;
-            loop = new GameLoop(gameContext, this);
-            loop.start();
-        }
-        if (((Button) event.getSource()).getText().equals("Deterministic DFS")) {
-            disableControllers();
-            currFunction = DDFS;
+        }else{
             loop = new GameLoop(gameContext, this);
             loop.start();
         }

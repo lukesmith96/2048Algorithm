@@ -8,7 +8,6 @@ import java.util.Random;
 
 /**
  * Created by Luke Smith on 08-Jul-17.
- * TODO not happy with class structure needs refactoring
  */
 
 public class Board implements Cloneable {
@@ -16,14 +15,12 @@ public class Board implements Cloneable {
     public static final int BOARD_WIDTH = 4;
     public static final int BOARD_HEIGHT = 4;
 
-    public IntegerProperty score;
     private boolean hasMoved;
     private Tile[][] grid;
-
+    public int selfScore = 0;
 
     public Board(Tile[][] grid) {
         this.grid = grid;
-        score = new SimpleIntegerProperty();
     }
 
     @Override
@@ -46,7 +43,6 @@ public class Board implements Cloneable {
         }
         createTile(true);
         createTile(true);
-        score = new SimpleIntegerProperty();
     }
 
     public int move(Direction d) {
@@ -137,24 +133,109 @@ public class Board implements Cloneable {
         grid[newx][newy] = tile;
     }
 
+    /*
+    * @param Tile tile the current tile that is trying to move.
+    * @param Tile blocker the blocking tile to collide with
+    * Collides two tiles that are already verified to be
+    * collidable.
+    * @return the weight of the new tile for keeping score
+     */
     private int collide(Tile tile, Tile blocker) {
         Tile newTile = new Tile(blocker.getPosX(), blocker.getPosY(), blocker.getWeight() * 2);
         newTile.setCollided(true);
         grid[blocker.getPosX()][blocker.getPosY()] = newTile;
         grid[tile.getPosX()][tile.getPosY()] = null;
-        //if (UIController.currFunction != DDFS)
-        //    updateScore(newTile.getWeight());
+        selfScore+=newTile.getWeight();
         return newTile.getWeight();
     }
 
-    public void updateScore(int value){
-        try {
-            Platform.runLater(()->score.set(score.add(value).get()));
+    /*
+    * @param Tile curr: the tile to evaluate
+    * @param Direction d to evaluate
+    *
+    * returns the first tile that collides with the current tile traveling the given direction
+    * if there is no tile then it can move all the way to end
+    */
+    private Tile canMove(Direction d, Tile curr) {
+        Tile toReturn = null;
+        switch (d) {
+            case UP:
+                for (int y = curr.getPosY() - 1; y >= 0; y--){
+                    if ((toReturn = grid[curr.getPosX()][y]) != null)
+                        return toReturn;
+                }
+                break;
+            case DOWN:
+                for (int y = curr.getPosY() + 1; y < BOARD_HEIGHT; y++){
+                    if ((toReturn = grid[curr.getPosX()][y]) != null)
+                        return toReturn;
+                }
+                break;
+            case LEFT:
+                for (int x = curr.getPosX() - 1; x >= 0; x--){
+                    if ((toReturn = grid[x][curr.getPosY()]) != null)
+                        return toReturn;
+                }
+                break;
+            case RIGHT:
+                for (int x = curr.getPosX() + 1; x < BOARD_WIDTH; x++){
+                    if ((toReturn = grid[x][curr.getPosY()]) != null)
+                        return toReturn;
+                }
+                break;
         }
-        catch (Exception e){
-            System.out.println("Score Error!");
-        }
+        return toReturn;
     }
+
+    /*
+    * @param bool lock for if creating beginning tiles and don't want to have 4
+    * Creates a tile and adds to grid. 1 in 10 chance to be a 4
+    * unless locked to 2.
+     */
+    public Tile createTile(boolean lock) {
+        Random rand = new Random();
+        int randX = rand.nextInt(BOARD_WIDTH);
+        int randY = rand.nextInt(BOARD_HEIGHT);
+        if(grid[randX][randY] != null) {
+            return createTile(lock);
+        }
+        int randWeight = rand.nextInt(10);
+        Tile tile = new Tile(randX, randY, (randWeight == 4 && !lock) ? 4 : 2);
+        grid[randX][randY] = tile;
+        return tile;
+    }
+
+    /*
+    * Returns an ArrayList of all tiles in current grid.
+     */
+    public ArrayList<Tile> getTiles() {
+        ArrayList<Tile> tiles = new ArrayList<>();
+        for (Tile[] row : grid)
+            for (Tile tile : row)
+                if (tile != null)
+                    tiles.add(tile);
+        return tiles;
+    }
+
+    /*
+    * if the board has a valid move anywhere
+     */
+    public boolean hasValidMove() {
+        if (size() < (BOARD_WIDTH * BOARD_HEIGHT))
+            return true;
+        boolean canMove = false;
+        canMove = (canMove)? canMove : hasValidMove(Direction.UP);
+        canMove = (canMove)? canMove : hasValidMove(Direction.DOWN);
+        canMove = (canMove)? canMove : hasValidMove(Direction.LEFT);
+        canMove = (canMove)? canMove : hasValidMove(Direction.RIGHT);
+        return canMove;
+    }
+
+    /*
+    * @param Direction d the direction in question
+    * if the Direction given contains a valid move.
+    * @return boolean answer
+     */
     public Boolean hasValidMove(Direction d){
         for (int x = 0; x < BOARD_WIDTH; x++) {
             for (int y = 0; y < BOARD_HEIGHT; y++) {
@@ -174,88 +255,6 @@ public class Board implements Cloneable {
         }
         return false;
     }
-    /*@param Tile curr: the tile to evaluate
-    * @param Direction d to evaluate
-    *
-    * returns the first tile that collides with the current tile traveling the given direction
-    * if there is no tile then it can move all the way to end
-    */
-    private Tile canMove(Direction d, Tile curr) {
-        Tile toReturn = null;
-        switch (d) {
-            case UP:
-                for (int y = curr.getPosY() - 1; y >= 0; y--){
-                    if (grid[curr.getPosX()][y] != null)
-                        toReturn = (toReturn == null)? grid[curr.getPosX()][y] : toReturn;
-                }
-                break;
-            case DOWN:
-                for (int y = curr.getPosY() + 1; y < BOARD_HEIGHT; y++){
-                    if (grid[curr.getPosX()][y] != null)
-                        toReturn = (toReturn == null)? grid[curr.getPosX()][y] : toReturn;
-                }
-                break;
-            case LEFT:
-                for (int x = curr.getPosX() - 1; x >= 0; x--){
-                    if (grid[x][curr.getPosY()] != null)
-                        toReturn = (toReturn == null)? grid[x][curr.getPosY()] : toReturn;
-                }
-                break;
-            case RIGHT:
-                for (int x = curr.getPosX() + 1; x < BOARD_WIDTH; x++){
-                    if (grid[x][curr.getPosY()] != null)
-                        toReturn = (toReturn == null)? grid[x][curr.getPosY()] : toReturn;
-                }
-                break;
-        }
-        return toReturn;
-    }
-
-    public Tile createTile(boolean lock) {
-        Random rand = new Random();
-        int randX = rand.nextInt(BOARD_WIDTH);
-        int randY = rand.nextInt(BOARD_HEIGHT);
-        if(grid[randX][randY] != null) {
-            return createTile(lock);
-        }
-        int randWeight = rand.nextInt(5);
-        Tile tile = new Tile(randX, randY, (randWeight == 4 && !lock) ? 4 : 2);
-        grid[randX][randY] = tile;
-        return tile;
-    }
-
-    public ArrayList<Tile> getTiles() {
-        ArrayList<Tile> tiles = new ArrayList<>();
-        for (Tile[] row : grid)
-            for (Tile tile : row)
-                if (tile != null)
-                    tiles.add(tile);
-        return tiles;
-    }
-
-    //TODO check is valid move exists on table.
-    public boolean hasValidMove() {
-        if (size() < (BOARD_WIDTH * BOARD_HEIGHT))
-            return true;
-        boolean canMove = false;
-        for(int x = 0; x < BOARD_WIDTH; x++) {
-            for (int y = 0; y < BOARD_HEIGHT; y++) {
-                if (x > 0)
-                    //check left
-                    canMove = (canMove)? canMove : grid[x][y].canCollide(grid[x-1][y]);
-                if (y > 0)
-                    //check up
-                    canMove = (canMove)? canMove : grid[x][y].canCollide(grid[x][y-1]);
-                if (x < BOARD_WIDTH - 1)
-                    // check right
-                    canMove = (canMove)? canMove : grid[x][y].canCollide(grid[x+1][y]);
-                if (y < BOARD_HEIGHT - 1)
-                    // check down
-                    canMove = (canMove)? canMove : grid[x][y].canCollide(grid[x][y+1]);
-            }
-        }
-        return canMove;
-    }
 
     public int size() {
         int size = 0;
@@ -263,19 +262,5 @@ public class Board implements Cloneable {
             for (Tile tile : row)
                 if(tile!=null)size++;
         return size;
-    }
-
-    public Tile[][] getGrid() {
-        return grid;
-    }
-
-    public Tile[][] cloneGrid() {
-        Tile[][] newGrid = new Tile[BOARD_HEIGHT][BOARD_WIDTH];
-        for (int i = 0; i < BOARD_WIDTH; i++) {
-            for (int j = 0; j < BOARD_HEIGHT; j++) {
-                newGrid[i][j] = (grid[i][j] == null)? null : grid[i][j].clone();
-            }
-        }
-        return newGrid;
     }
 }
