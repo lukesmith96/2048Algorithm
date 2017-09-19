@@ -1,5 +1,8 @@
 package com.company;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+
 import java.util.Random;
 
 /**
@@ -44,6 +47,7 @@ public class GameLoop extends Thread {
             }
             if (nextDir == null){
                 //ToDo you lost!
+                running = false;
                 break;
             }
 
