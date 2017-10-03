@@ -1,7 +1,7 @@
 # 2048Algorithm
 By: Luke Smith
 
-##Project Overview and Goals:
+## Project Overview and Goals:
 
 1. Learn to create a game using JavaFX
 2. Experiment with algorithms to beat the game
@@ -12,7 +12,7 @@ This project is a JavaFX implementation of the popular game 2048 with multiple s
 the computer's ability to win the game. Also utilized is multithreading in order to use multiple game states
 in the algorithms and allow the user to hot switch game strategies and algorithm timers.
 
-##Strategies:
+## Strategies:
 
 - Random
     Make moves in random order no intelligence used
@@ -38,7 +38,7 @@ in the algorithms and allow the user to hot switch game strategies and algorithm
 
     Currently this process is slow and inefficient compared to DDFS, success rate is lower.
 
-##Future Plans:
+## Future Plans:
 
 - Minimax with pruning
     The next strategy I plan on implementing. A popular game algorithm it will give me experience prioritizing
