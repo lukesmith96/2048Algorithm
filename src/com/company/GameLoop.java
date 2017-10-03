@@ -30,9 +30,6 @@ public class GameLoop extends Thread {
                 case RANDOM:
                     nextDir = callRandom();
                     break;
-                case STACK:
-                    nextDir = getNextMoveStackPriority();
-                    break;
                 case CORNER:
                     nextDir = getNextMoveCornerPriority();
                     break;
@@ -47,7 +44,6 @@ public class GameLoop extends Thread {
             }
             if (nextDir == null){
                 //ToDo you lost!
-                running = false;
                 break;
             }
 
@@ -67,11 +63,10 @@ public class GameLoop extends Thread {
         }
     }
 
-    private Direction getNextMoveStackPriority() {
-
-        return Direction.LEFT;
-    }
-
+    /*
+     * Basic algorithm for using the popular corner priority scheme showing it's
+     * in effectiveness without any other additional strategy
+     */
     private Direction getNextMoveCornerPriority() {
         Random rand = new Random();
         boolean right = context.getBoard().hasValidMove(Direction.RIGHT);

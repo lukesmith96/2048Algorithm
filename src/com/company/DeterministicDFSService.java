@@ -9,6 +9,12 @@ public class DeterministicDFSService {
 
     public DeterministicDFSService(){}
 
+    /*
+     * @param board start board position
+     * @param runs number of runs that will be averaged
+     * Spawns depth first search to find best move with current board
+     * @return bestScore found and suggested move to make
+     */
     public int[] getBestMove(Board board, int runs) {
         int bestScore = 0;
         int bestMove = -1;
@@ -24,6 +30,9 @@ public class DeterministicDFSService {
         return new int[] {bestScore, bestMove};
     }
 
+    /*
+     * Iterates through an inputted amount of runs and averages score
+     */
     private int[] spawnMultiRun(Board board, int dir, int runs) {
         int bestScore = 0;
 
@@ -46,6 +55,9 @@ public class DeterministicDFSService {
         return new int[]{tScore/runs, tMoves/runs};
     }
 
+    /*
+     * deep clone on boards to reset them every run
+     */
     private Board[] initRuns(Board board, int runs) {
         Board[] boards = new Board[runs];
         for (int i = 0; i < runs; i++) {
@@ -55,6 +67,11 @@ public class DeterministicDFSService {
         return boards;
     }
 
+    /*
+     * Spawns one run using the board inputted
+     * dir specifies the first move made before the game is
+     * randomly simulated.
+     */
     private int[] randomRun(Board board, int dir) {
         int score = board.selfScore;
         int moves = 0;
@@ -81,6 +98,16 @@ public class DeterministicDFSService {
         return new int[]{score, moves};
     }
 
+    /*
+     * @param board current board state to suggest move
+     * @param lookahead recursive value to keep track of layers
+     * Attempts to over come DDFS issue with inability to predict successive moves
+     * DDFS is random after the first move and lacks an ability to find move series
+     * This looks ahead of just the first level deciding on multiple levels
+     * what the move should be hopefully following that path down.
+     *
+     * Currently this process is slow and inefficient compared to DDFS, success rate is lower.
+     */
     public int[] lookAheadDDFS(Board board, int lookAhead) {
         int currentLayerScore = 0;
         int currentBestMove = -1;

@@ -23,6 +23,9 @@ public class Board implements Cloneable {
         this.grid = grid;
     }
 
+    /*
+    * Deep clone for algorithm state analysis
+     */
     @Override
     public Board clone() {
         Tile[][] newGrid = new Tile[BOARD_HEIGHT][BOARD_WIDTH];
@@ -34,6 +37,9 @@ public class Board implements Cloneable {
         return new Board(newGrid);
     }
 
+    /*
+    * Init Board function
+     */
     public Board() {
         this.grid = new Tile[BOARD_WIDTH][BOARD_HEIGHT];
         for (int x = 0; x < BOARD_WIDTH; x++) {

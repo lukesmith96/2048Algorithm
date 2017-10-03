@@ -80,8 +80,6 @@ public class Main extends Application {
                 background.getChildren().add(backg);
             }
         }
-
-
         gameContext.gameview.setStyle("-fx-border-width:7px;");
         gameContext.gameview.getChildren().addAll(background);//gameContext.getBoard().getBackground());
 
@@ -183,6 +181,7 @@ public class Main extends Application {
         label.setLayoutY(y);
         return label;
     }
+
     public static class GameContext{
         private Pane gameview;
         private Board board;
