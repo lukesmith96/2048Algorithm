@@ -14,7 +14,7 @@ in the algorithms and allow the user to hot switch game strategies and algorithm
 
 ## Strategies:
 
-- Random
+- Random:
 
     Make moves in random order no intelligence used
 

@@ -7,8 +7,6 @@ import java.util.Random;
  */
 public class DeterministicDFSService {
 
-    public DeterministicDFSService(){}
-
     /*
      * @param board start board position
      * @param runs number of runs that will be averaged

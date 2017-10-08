@@ -10,7 +10,6 @@ import static com.company.Function.*;
 enum Function{
     RANDOM,
     CORNER,
-    STACK,
     DDFS,
     LOOKAHEAD,
     USER

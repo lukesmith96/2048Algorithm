@@ -23,8 +23,6 @@ import static com.company.Tile.TILE_SIZE;
 public class Main extends Application {
 
     private GameContext gameContext;
-    private GameLoop gameLoop;
-    private Task<Void> gameThread;
     private UIController buttonController;
     public final Image defaultImage = new Image("/com/company/defaultSquare.jpg");
     private static Group background = new Group();
@@ -72,8 +70,8 @@ public class Main extends Application {
         // Set key listener for user control
         UI.setOnKeyPressed(new KeyListener(gameContext));
 
-        for (int x =0; x < Board.BOARD_WIDTH; x++) {
-            for (int y = 0; y < Board.BOARD_HEIGHT; y++) {
+        for (int x =0; x < Board.BOARD_SIZE; x++) {
+            for (int y = 0; y < Board.BOARD_SIZE; y++) {
                 Rectangle backg = new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                 ImagePattern pat = new ImagePattern(defaultImage);
                 backg.setFill(pat);

@@ -1,8 +1,5 @@
 package com.company;
 
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-
 import java.util.Random;
 
 /**
@@ -21,14 +18,13 @@ public class GameLoop extends Thread {
 
     @Override
     public void run(){
-        boolean running = true;
         Function function = controller.getCurrentFunction();
         DeterministicDFSService ddfs = new DeterministicDFSService();
-        while(running) {
+        while(true) {
             Direction nextDir = null;
             switch (function){
                 case RANDOM:
-                    nextDir = callRandom();
+                    nextDir = randomNextMove();
                     break;
                 case CORNER:
                     nextDir = getNextMoveCornerPriority();
@@ -42,23 +38,17 @@ public class GameLoop extends Thread {
                     nextDir = Direction.getDir(sets[1]);
                     break;
             }
-            if (nextDir == null){
-                //ToDo you lost!
-                break;
-            }
-
-            dirController.move(nextDir);
-            context.updateUI();
-
-            if (context.getBoard().size() == 16 && !context.getBoard().hasValidMove()) {
+            if ((context.getBoard().size() == (Board.BOARD_SIZE * Board.BOARD_SIZE) && !context.getBoard().hasValidMove()) || nextDir == null) {
                 System.out.println("You LOST!");
                 break;
             }
+            dirController.move(nextDir);
+            context.updateUI();
             try {
                 int delay = controller.getDelay();
                 Thread.sleep(delay);
             } catch (Exception e) {
-                running = false;
+                break;
             }
         }
     }
@@ -110,7 +100,7 @@ public class GameLoop extends Thread {
         }
     }
 
-    private Direction callRandom() {
+    private Direction randomNextMove() {
         int pick = new Random().nextInt(Direction.values().length);
         return Direction.values()[pick];
     }
