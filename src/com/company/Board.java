@@ -1,5 +1,7 @@
 package com.company;
 
+import javafx.util.Pair;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -206,6 +208,30 @@ public class Board implements Cloneable {
         return tile;
     }
 
+    public void addCustomTile(int x, int y, int value){
+        Tile tile = new Tile(x, y, value);
+        grid[x][y] = tile;
+    }
+
+    /*
+    * Returns an ArrayList of all open spaces in current grid.
+     */
+    public ArrayList<Pair<Integer, Integer>> getOpenTiles() {
+        ArrayList<Pair<Integer, Integer>> spaces = new ArrayList<>();
+        int x = 0;
+        int y = 0;
+        for (Tile[] row : grid) {
+            for (Tile tile : row) {
+                if (tile == null)
+                    spaces.add(new Pair<>(x,y));
+                ++y;
+            }
+            ++x;
+            y = 0;
+        }
+        return spaces;
+    }
+
     /*
     * Returns an ArrayList of all tiles in current grid.
      */
@@ -263,5 +289,9 @@ public class Board implements Cloneable {
             for (Tile tile : row)
                 if(tile!=null)size++;
         return size;
+    }
+
+    public void removeTile(int x, int y) {
+        grid[x][y] = null;
     }
 }
