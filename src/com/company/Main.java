@@ -115,7 +115,7 @@ public class Main extends Application {
         Button userControlButton = new Button("User Control");
         Button s3Button = new Button("Deterministic DFS");
         Button s2Button = new Button("Look Ahead");
-        Button s1Button = new Button("Corner Priority");
+        Button s1Button = new Button("Minimax");
 
         randomButton.setOnAction(buttonController);
         s1Button.setOnAction(buttonController);

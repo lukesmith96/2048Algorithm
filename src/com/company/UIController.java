@@ -9,7 +9,7 @@ import static com.company.Function.*;
 
 enum Function{
     RANDOM,
-    CORNER,
+    MINIMAX,
     DDFS,
     LOOKAHEAD,
     USER
@@ -48,9 +48,9 @@ public class UIController implements EventHandler<ActionEvent> {
             disableControllers();
             currFunction = RANDOM;
         }
-        if (((Button) event.getSource()).getText().equals("Corner Priority")) {
+        if (((Button) event.getSource()).getText().equals("Minimax")) {
             disableControllers();
-            currFunction = CORNER;
+            currFunction = MINIMAX;
         }
         if (((Button) event.getSource()).getText().equals("Look Ahead")) {
             disableControllers();

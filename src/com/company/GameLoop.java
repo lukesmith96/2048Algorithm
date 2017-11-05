@@ -20,14 +20,16 @@ public class GameLoop extends Thread {
     public void run(){
         Function function = controller.getCurrentFunction();
         DeterministicDFSService ddfs = new DeterministicDFSService();
+        MiniMaxService minimax = new MiniMaxService();
         while(true) {
             Direction nextDir = null;
             switch (function){
                 case RANDOM:
                     nextDir = randomNextMove();
                     break;
-                case CORNER:
-                    nextDir = getNextMoveCornerPriority();
+                case MINIMAX:
+                    Direction dir = minimax.findBestMove(context.getBoard().clone(), 3, 10);
+                    nextDir = dir;
                     break;
                 case DDFS:
                     int[] set = ddfs.getBestMove(context.getBoard().clone(), 1000);

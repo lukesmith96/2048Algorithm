@@ -9,22 +9,22 @@ import java.util.ArrayList;
  * 
  */
 public class MiniMaxService {
-    public Pair findBestMove(Board board, int depth, int runs){
-        Pair<Integer, Integer> bestMove = maximize(board.clone(), -1, 1, depth, runs);
-        return bestMove;
+    public Direction findBestMove(Board board, int depth, int runs){
+        Pair<Float, Direction> bestMove = maximize(board.clone(), -1, 1, depth, runs);
+        return bestMove.getValue();
     }
 
-    private Pair maximize(Board board, int alpha, int beta, int depth, int runs) {
-        if (!board.hasValidMove()) {
+    private Pair maximize(Board board, float alpha, float beta, int depth, int runs) {
+        if (!board.hasValidMove() || depth == 0) {
             return new Pair<>(utility(board), null);
         }
-        Pair<Integer, Integer> best = null;
+        Pair<Float, Direction> best = null;
         for (Direction d : actions(board)){
             Board newBoard = board.clone();
             newBoard.move(d);
-            Pair<Integer, Integer> curr = minimize(newBoard, alpha, beta, depth, runs);
-            if (best.getKey() < curr.getKey()){
-                best = curr;
+            Pair<Float, Direction> curr = minimize(newBoard, alpha, beta, depth - 1, runs);
+            if (best == null || best.getKey() < curr.getKey()){
+                best = new Pair<>(curr.getKey(), d);
             }
             if (best.getKey() >= beta)
                 return best;
@@ -33,11 +33,11 @@ public class MiniMaxService {
         return best;
     }
 
-    private Pair minimize(Board board, int alpha, int beta, int depth, int runs) {
+    private Pair minimize(Board board, float alpha, float beta, int depth, int runs) {
         int[] best = {Integer.MAX_VALUE, Integer.MAX_VALUE};
-        int[] util = {Integer.MAX_VALUE, Integer.MAX_VALUE};
+        float[] util = {Float.MAX_VALUE, Float.MAX_VALUE};
 
-        ArrayList<Pair<Integer, Pair>> options = new ArrayList<>();
+        ArrayList<Pair<Float, Pair>> options = new ArrayList<>();
         Board test = board.clone();
         int j = 0;
         for (int i = 0; i < 2; i++) {
@@ -53,12 +53,20 @@ public class MiniMaxService {
             }
             j = 0;
         }
+        Pair<Float, Direction> bestScore = null;
         for (int i = 0; i < 2; i++) {
             Board clone = board.clone();
             clone.addCustomTile((int)options.get(best[i]).getValue().getKey(),
-                    (int)options.get(best[i]).getValue().getValue(), 2 + (2*1));
-            maximize(clone, alpha, beta, depth, runs);
+                    (int)options.get(best[i]).getValue().getValue(), 2 + (2*i));
+            Pair<Float, Direction> curr = maximize(clone, alpha, beta, depth, runs);
+            if (bestScore == null || bestScore.getKey() > curr.getKey()){
+                bestScore = curr;
+            }
+            if (bestScore.getKey() < alpha)
+                return bestScore;
+            beta = Math.min(beta, bestScore.getKey());
         }
+        return bestScore;
     }
 
     private ArrayList<Direction> actions(Board board) {
@@ -70,7 +78,13 @@ public class MiniMaxService {
         return d;
     }
 
-    private int utility(Board board) {
-        return 0;
+
+    private float utility(Board board) {
+        float maxutil = board.maxvalue();
+        float smoothness = board.findSmoothness();
+        float lonecount = board.findLoneGroups();
+        // do random runs on the board.
+        //?
+        return maxutil + smoothness + lonecount;
     }
 }

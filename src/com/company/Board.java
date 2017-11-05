@@ -263,7 +263,7 @@ public class Board implements Cloneable {
     * if the Direction given contains a valid move.
     * @return boolean answer
      */
-    public Boolean hasValidMove(Direction d){
+    public boolean hasValidMove(Direction d){
         for (int x = 0; x < BOARD_SIZE; x++) {
             for (int y = 0; y < BOARD_SIZE; y++) {
                 if (grid[x][y] != null) {
@@ -293,5 +293,88 @@ public class Board implements Cloneable {
 
     public void removeTile(int x, int y) {
         grid[x][y] = null;
+    }
+
+    public float maxvalue() {
+        int max = 0;
+        for (Tile[] row : grid)
+            for (Tile tile : row)
+                if(tile!=null && tile.getWeight() > max) max = tile.getWeight();
+        return (float)Math.log(max);
+    }
+
+    private boolean isOpen(int x, int y){
+        return grid[x][y] == null;
+    }
+
+    public float findSmoothness() {
+        float[] values = {0,0};
+        for (int x = 0; x < BOARD_SIZE; x++){
+            int curr = 0;
+            int next = 1;
+            while (next < BOARD_SIZE){
+                while (next < 3 && isOpen(x,next)){
+                    next++;
+                }
+                if (next >= 4)
+                    next--;
+                float currVal = !isOpen(x, curr) ? grid[x][curr].getWeight() : 0;
+                float nextVal = !isOpen(x, next) ? grid[x][next].getWeight() : 0;
+                if (currVal > nextVal) {
+                    values[0] -= currVal - nextVal;
+                }else{
+                    values[0] += nextVal - currVal;
+                }
+                curr = next;
+                next++;
+            }
+        }
+        for (int y = 0; y < BOARD_SIZE; y++){
+            int curr = 0;
+            int next = 1;
+            while (next < BOARD_SIZE){
+                while (next < 3 && isOpen(next,y)){
+                    next++;
+                }
+                float currVal = !isOpen(curr, y) ? grid[curr][y].getWeight() : 0;
+                float nextVal = !isOpen(next, y) ? grid[next][y].getWeight() : 0;
+                if (currVal > nextVal) {
+                    values[1] += currVal - nextVal;
+                }else{
+                    values[1] -= nextVal - currVal;
+                }
+                curr = next;
+                next++;
+            }
+        }
+        return values[0] + values[1];
+    }
+
+    public float findLoneGroups() {
+        boolean visited[][] = new boolean[BOARD_SIZE][BOARD_SIZE];
+        int count = 0;
+        for (int i = 0; i < BOARD_SIZE; i++){
+            for (int j = 0; j < BOARD_SIZE; j++){
+                if (!isOpen(i,j) && !visited[i][j]){
+                    DFS(i, j, visited);
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    private void DFS(int i, int j, boolean[][] visited) {
+        int rowNbr[] = new int[] {-1, -1, -1,  0, 0,  1, 1, 1};
+        int colNbr[] = new int[] {-1,  0,  1, -1, 1, -1, 0, 1};
+
+        visited[i][j] = true;
+
+        for (int k = 0; k < 8; k++){
+            if ((i + rowNbr[k] >= 0) && (i + rowNbr[k] < BOARD_SIZE) && (j + colNbr[k] >= 0) && (j + colNbr[k] < BOARD_SIZE)
+                    && (!isOpen(i + rowNbr[k],j + colNbr[k]) && !visited[i + rowNbr[k]][j + colNbr[k]])){
+                DFS(i + rowNbr[k], j + colNbr[k], visited);
+            }
+        }
     }
 }
